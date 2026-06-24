@@ -1,0 +1,16 @@
+-- Active: 1778464382022@@127.0.0.1@5432
+docker build -f backend/Dockerfile.reader -t solar-reader . && \
+docker run --network host \
+  --device /dev/ttyUSB0:/dev/ttyUSB0 \
+  -e SERIAL_PORT=/dev/ttyUSB0 \
+  -e SERIAL_BAUDRATE=9600 \
+  -e DB_HOST=localhost \
+  -e DB_PORT=5432 \
+  
+  -e DB_NAME=sensors_db \
+  -e DB_USER=postgres \
+  -e DB_PASSWORD=postgres \
+  solar-reader
+
+
+docker-compose -f docker-compose.db.yml up -d
