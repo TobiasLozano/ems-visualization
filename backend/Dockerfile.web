@@ -1,0 +1,18 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    python3-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy both python files in case they share code later, and templates
+COPY backend/serial_reader.py ./serial_reader.py
+COPY backend/web_app.py ./web_app.py
+COPY backend/templates ./templates
+
+CMD ["python3", "web_app.py"]

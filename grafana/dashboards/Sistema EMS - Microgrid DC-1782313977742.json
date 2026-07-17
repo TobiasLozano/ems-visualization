@@ -18,7 +18,20 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Ver datos",
+      "tooltip": "",
+      "type": "link",
+      "url": "http://localhost:5000/"
+    }
+  ],
   "panels": [
     {
       "datasource": {
@@ -532,7 +545,7 @@
         },
         "zoomToContent": false
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -1005,7 +1018,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -1184,7 +1197,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -1363,7 +1376,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -1544,7 +1557,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -1755,7 +1768,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -1966,7 +1979,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -2174,7 +2187,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -2301,7 +2314,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -2430,7 +2443,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -2562,7 +2575,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "12.4.0",
       "targets": [
         {
           "dataset": "sensors_db",
@@ -2714,6 +2727,6 @@
   "timezone": "browser",
   "title": "Sistema EMS - Microgrid DC",
   "uid": "ad5js8t",
-  "version": 105,
+  "version": 1,
   "weekStart": ""
 }

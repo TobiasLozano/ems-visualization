@@ -6,7 +6,6 @@ docker run --network host \
   -e SERIAL_BAUDRATE=9600 \
   -e DB_HOST=localhost \
   -e DB_PORT=5432 \
-  
   -e DB_NAME=sensors_db \
   -e DB_USER=postgres \
   -e DB_PASSWORD=postgres \

@@ -1,9 +1,6 @@
 services:
   postgres:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile.postgres
-    image: ${DOCKER_USERNAME:-miusuario}/ems-postgres:latest
+    image: ${DOCKER_USERNAME:-tobiaslozano}/ems-postgres:latest
     container_name: solar_postgres
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
@@ -22,16 +19,11 @@ services:
       - solar_net
     restart: unless-stopped
 
-
-
   serial_reader:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile.reader
-    image: ${DOCKER_USERNAME:-miusuario}/ems-reader:latest
+    image: ${DOCKER_USERNAME:-tobiaslozano}/ems-reader:latest
     container_name: solar_reader
     environment:
-      SERIAL_PORT: ${SERIAL_PORT:-/dev/ttyUSB0}
+      SERIAL_PORT: ${SERIAL_PORT:-/dev/ttyACM0}
       SERIAL_BAUDRATE: ${SERIAL_BAUDRATE:-9600}
       DB_HOST: postgres
       DB_PORT: 5432
@@ -39,7 +31,7 @@ services:
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
     devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyACM0:/dev/ttyACM0
     depends_on:
       postgres:
         condition: service_healthy
@@ -48,10 +40,7 @@ services:
     restart: unless-stopped
 
   grafana:
-    build:
-      context: .
-      dockerfile: grafana/Dockerfile.grafana
-    image: ${DOCKER_USERNAME:-miusuario}/ems-grafana:latest
+    image: ${DOCKER_USERNAME:-tobiaslozano}/ems-grafana:latest
     container_name: solar_grafana
     ports:
       - "3000:3000"
@@ -64,10 +53,7 @@ services:
     restart: unless-stopped
 
   web_app:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile.web
-    image: ${DOCKER_USERNAME:-miusuario}/ems-webapp:latest
+    image: ${DOCKER_USERNAME:-tobiaslozano}/ems-webapp:latest
     container_name: solar_webapp
     environment:
       DB_HOST: postgres

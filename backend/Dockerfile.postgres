@@ -1,0 +1,4 @@
+FROM postgres:15-alpine
+
+# Copiar el script de backup para auto-cargar los datos si la DB está vacía
+COPY sql_scripts/backup_2026-06-24_10-41.sql /docker-entrypoint-initdb.d/01_backup.sql

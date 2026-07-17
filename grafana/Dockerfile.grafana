@@ -1,0 +1,7 @@
+FROM grafana/grafana:latest
+
+# Copiar configuración de provisioning (datasource y dashboards)
+COPY grafana/provisioning /etc/grafana/provisioning
+
+# Copiar los archivos JSON de los dashboards
+COPY grafana/dashboards /etc/grafana/dashboards

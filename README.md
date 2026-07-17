@@ -18,7 +18,7 @@ ls /dev/ttyUSB*
 # Si es otro puerto, actualizar .env
 ```
 
-## Arrancar Sistema
+## Arrancar Sistema (Localmente)
 
 ```bash
 # Construir y levantar contenedores
@@ -30,6 +30,35 @@ docker-compose ps
 # Ver logs en tiempo real
 docker-compose logs -f serial_reader
 ```
+
+## Publicar y Ejecutar con DockerHub
+
+Si deseas subir tus imágenes a DockerHub (con el backup ya incluido) y luego descargarlas y ejecutarlas en otro servidor:
+
+1. **Configurar tu usuario de DockerHub:**
+   En tu archivo `.env`, agrega la variable `DOCKER_USERNAME` con tu usuario:
+   ```bash
+   DOCKER_USERNAME=tu_usuario_dockerhub
+   ```
+
+2. **Construir y empujar las imágenes:**
+   ```bash
+   # Inicia sesión en DockerHub
+   docker login
+   
+   # Construye las imágenes usando los Dockerfiles
+   docker-compose build
+   
+   # Sube las imágenes a DockerHub
+   docker-compose push
+   ```
+
+3. **Ejecutar en cualquier servidor:**
+   Solo necesitas el archivo `docker-compose.yml` y el archivo `.env`. Al ejecutar:
+   ```bash
+   docker-compose up -d
+   ```
+   Se descargarán automáticamente tus imágenes desde DockerHub, con tus datos de base de datos (tu backup) y configuración de Grafana ya integrados en ellas.
 
 ## Acceso a Grafana
 

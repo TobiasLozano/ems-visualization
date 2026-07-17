@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema EMS - Microgrid DC</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: #1e1e1e !important;
+            border-bottom: 1px solid #333;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            background-color: #252526;
+            border-bottom: 1px solid #333;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: capitalize;
+            border-top-left-radius: 11px !important;
+            border-top-right-radius: 11px !important;
+        }
+        .stat-icon {
+            font-size: 1.5rem;
+            color: #0dcaf0;
+        }
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .btn-download {
+            width: 100%;
+            background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+            border: none;
+        }
+        .btn-download:hover {
+            background: linear-gradient(135deg, #0b5ed7, #0a53be);
+        }
+        #loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50vh;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <i class="bi bi-activity text-info"></i> EMS Data Portal
+            </a>
+            <div class="d-flex">
+                <a href="http://localhost:3000" class="btn btn-outline-info btn-sm" target="_blank">
+                    <i class="bi bi-graph-up"></i> Abrir Grafana
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-5 fw-bold text-white mb-3">Sistema EMS - Microgrid DC</h1>
+            <p class="lead text-light opacity-75">Visualiza el estado de las tablas de datos y descarga reportes detallados en CSV.</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        
+        <div id="loading">
+            <div class="spinner-border text-info" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+
+        <div id="error-container" class="alert alert-danger d-none" role="alert">
+        </div>
+
+        <div class="row g-4" id="tables-container">
+            <!-- Cards will be injected here via JS -->
+        </div>
+
+    </div>
+
+    <footer class="text-center mt-5 py-3 border-top border-secondary">
+        <small class="text-muted">Desarrollado por <a href="https://github.com/TobiasLozano" target="_blank" class="text-info text-decoration-none">Tobias Lozano</a></small>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.css" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTables();
+        });
+
+        async function fetchTables() {
+            const container = document.getElementById('tables-container');
+            const loading = document.getElementById('loading');
+            const errorContainer = document.getElementById('error-container');
+
+            try {
+                const response = await fetch('/api/tables');
+                if (!response.ok) {
+                    throw new Error(`Error de servidor: ${response.status}`);
+                }
+                const tables = await response.json();
+                
+                loading.classList.add('d-none');
+                
+                if (tables.length === 0) {
+                    errorContainer.textContent = "No se encontraron tablas de datos.";
+                    errorContainer.classList.remove('d-none');
+                    return;
+                }
+
+                tables.forEach(table => {
+                    const card = createTableCard(table);
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                loading.classList.add('d-none');
+                errorContainer.textContent = "No se pudo cargar la información de las tablas: " + error.message;
+                errorContainer.classList.remove('d-none');
+            }
+        }
+
+        function createTableCard(table) {
+            const col = document.createElement('div');
+            col.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+            
+            // Nombre amigable (opcional, transforma temp_panel a Temp Panel)
+            const friendlyName = table.name.replace(/_/g, ' ');
+
+            // Set default dates for the inputs (Last 24 hours)
+            const end = new Date();
+            const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
+            
+            const startStr = start.toISOString().slice(0, 19).replace('T', ' ');
+            const endStr = end.toISOString().slice(0, 19).replace('T', ' ');
+
+            col.innerHTML = `
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-table me-2"></i>${friendlyName}</span>
+                        <span class="badge bg-secondary text-lowercase">${table.name}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-2">
+                            <div class="text-center w-50 border-end border-secondary">
+                                <div class="text-muted small mb-1">Registros</div>
+                                <div class="stat-value text-info">${table.row_count.toLocaleString()}</div>
+                            </div>
+                            <div class="text-center w-50">
+                                <div class="text-muted small mb-1">Tamaño</div>
+                                <div class="stat-value text-warning">${table.size}</div>
+                            </div>
+                        </div>
+
+                        <form onsubmit="downloadData(event, '${table.name}')" class="mt-3">
+                            <div class="d-flex justify-content-between align-items-end mb-2">
+                                <label class="form-label small text-muted mb-0">Rango de tiempo</label>
+                                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2" onclick="pasteGrafanaRange('${table.name}')" title="Pegar JSON de Grafana">
+                                    <i class="bi bi-clipboard"></i> Pegar
+                                </button>
+                            </div>
+                            <div class="mb-2">
+                                <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary" id="start-${table.name}" value="${startStr}" placeholder="Desde (YYYY-MM-DD HH:mm:ss)" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary" id="end-${table.name}" value="${endStr}" placeholder="Hasta (YYYY-MM-DD HH:mm:ss)" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm btn-download">
+                                <i class="bi bi-download me-1"></i> Descargar CSV
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            return col;
+        }
+
+        function downloadData(event, tableName) {
+            event.preventDefault();
+            const startInput = document.getElementById(`start-${tableName}`).value;
+            const endInput = document.getElementById(`end-${tableName}`).value;
+            
+            if (!startInput || !endInput) {
+                alert("Por favor selecciona ambas fechas.");
+                return;
+            }
+
+            // Convert local datetime input to UTC or keep as local
+            // Postgres timestamp generally accepts this format directly: YYYY-MM-DDTHH:mm
+            const start = startInput.replace('T', ' ');
+            const end = endInput.replace('T', ' ');
+
+            const url = `/api/download/${tableName}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+            
+            // Create a temporary link to trigger download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        async function pasteGrafanaRange(tableName) {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (!text) return;
+                
+                // Attempt to parse JSON
+                let data = null;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    alert("El texto en el portapapeles no parece ser un JSON válido de Grafana.\\n\\nCopia algo como: {\\\"from\\\":\\\"...\\\",\\\"to\\\":\\\"...\\\"}");
+                    return;
+                }
+
+                if (data && data.from && data.to) {
+                    // Limpiamos un poco el formato para que sea más amigable
+                    const formatGrafanaTime = (timeStr) => {
+                        return timeStr.replace('T', ' ').replace('Z', '');
+                    };
+
+                    document.getElementById(`start-${tableName}`).value = formatGrafanaTime(data.from);
+                    document.getElementById(`end-${tableName}`).value = formatGrafanaTime(data.to);
+                } else {
+                    alert("El JSON copiado no contiene las propiedades 'from' y 'to'.");
+                }
+            } catch (err) {
+                console.error("Failed to read clipboard contents: ", err);
+                alert("No se pudo leer el portapapeles. Es posible que el navegador haya bloqueado el acceso o que necesites dar permisos.");
+            }
+        }
+    </script>
+</body>
+</html>
