@@ -1,77 +1,75 @@
 # Sistema Solar - Monitoreo en Tiempo Real
 
-Sistema Docker para leer datos de sensores via USB-TTL del Arduino y visualizar histórico en un frontend web.
+Sistema Docker para lectura de datos de sensores vía USB-TTL desde dispositivos Arduino/ESP32 y visualización del histórico en un frontend web.
 
 ## Requisitos
 
-- Docker y Docker Compose
-- Arduino/ESP32 con sensores conectado por USB-TTL
-- Permisos en puerto serial
+- Docker y Docker Compose instalados.
+- Dispositivo Arduino o ESP32 con sensores, conectado mediante interfaz USB-TTL.
+- Permisos adecuados en el puerto serial del sistema operativo.
 
-## Verificar puerto serial
+## Verificación del puerto serial
 
 ```bash
 # Listar puertos disponibles
 ls /dev/ttyUSB*
 
-# Si ves /dev/ttyUSB0 está listo
-# Si es otro puerto, actualizar .env
+# Si aparece /dev/ttyUSB0, el puerto está listo para usarse.
+# En caso de detectar un puerto diferente, es necesario actualizar el archivo .env.
 ```
 
-## Arrancar Sistema (Localmente)
+## Arranque del Sistema (Localmente)
 
 ```bash
-# Construir y levantar contenedores
+# Construcción y levantamiento de contenedores
 docker-compose up -d
 
-# Ver estado de contenedores
+# Verificación del estado de los contenedores
 docker-compose ps
 
-# Ver logs en tiempo real
+# Visualización de logs en tiempo real
 docker-compose logs -f serial_reader
 ```
 
-## Publicar y Ejecutar con DockerHub
+## Publicación y Ejecución con DockerHub
 
-Si deseas subir tus imágenes a DockerHub (con el backup ya incluido) y luego descargarlas y ejecutarlas en otro servidor:
+Para publicar imágenes en DockerHub (con el backup de la base de datos ya incluido) y permitir su ejecución en otros servidores, se debe seguir el siguiente procedimiento:
 
-1. **Configurar tu usuario de DockerHub:**
-   En tu archivo `.env`, agrega la variable `DOCKER_USERNAME` con tu usuario:
+1. **Configuración del usuario de DockerHub:**
+   En el archivo `.env`, se debe agregar la variable `DOCKER_USERNAME` con el usuario correspondiente:
    ```bash
-   DOCKER_USERNAME=tu_usuario_dockerhub
+   DOCKER_USERNAME=usuario_dockerhub
    ```
 
-2. **Construir y empujar las imágenes:**
+2. **Construcción y subida de imágenes:**
    ```bash
-   # Inicia sesión en DockerHub
+   # Inicio de sesión en DockerHub
    docker login
    
-   # Construye las imágenes usando los Dockerfiles
+   # Construcción de imágenes utilizando los Dockerfiles
    docker-compose build
    
-   # Sube las imágenes a DockerHub
+   # Subida de las imágenes al repositorio en DockerHub
    docker-compose push
    ```
 
-3. **Ejecutar en cualquier servidor:**
-   Solo necesitas el archivo `docker-compose.yml` y el archivo `.env`. Al ejecutar:
+3. **Ejecución en entorno de despliegue:**
+   Para desplegar el sistema, únicamente se requieren los archivos `docker-compose.yml` y `.env`. Al ejecutar:
    ```bash
    docker-compose up -d
    ```
-   Se descargarán automáticamente tus imágenes desde DockerHub, con tus datos de base de datos (tu backup) y configuración de Grafana ya integrados en ellas.
+   Las imágenes se descargarán automáticamente desde DockerHub, integrando los datos de la base de datos (backup) y la configuración preestablecida de Grafana.
 
-## Acceso a Grafana
+## Acceso a Grafana y Portal Web
 
-```
-http://localhost:3000
-```
+- **Portal Web (Sistema EMS):** `http://localhost:5000`
+- **Grafana:** `http://localhost:3000`
 
-> Grafana está incluido en el stack para visualizaciones avanzadas, y es el componente principal para visualizar los datos de la base de datos.
-> La base de datos y los dashboards se autoconfiguran al iniciar el contenedor.
+> Grafana está incluido en el stack para visualizaciones avanzadas, actuando como componente principal para la observación de datos. Tanto la base de datos como los dashboards se autoconfiguran durante el inicio del contenedor.
 
 ## Datos Esperados
 
-Arduino envía JSON cada 5 segundos:
+El dispositivo Arduino/ESP32 debe enviar un objeto JSON cada 5 segundos con el siguiente formato:
 
 ```json
 {
@@ -86,95 +84,99 @@ Arduino envía JSON cada 5 segundos:
 }
 ```
 
-Almacenados en 8 tablas time-series (una por sensor):
-- `temp_panel`, `temp_bat` - Temperaturas en °C
-- `volt_panel`, `volt_bat`, `volt_load` - Voltajes en V (0-50V)
-- `amp_panel`, `amp_bat`, `amp_load` - Corrientes en A
-Cada tabla contiene:
-- `timestamp`: fecha/hora automática
-- `value`: valor numérico
+Estos datos son almacenados en 8 tablas de tipo time-series (una por cada sensor):
+- `temp_panel`, `temp_bat` - Mediciones de temperatura en °C
+- `volt_panel`, `volt_bat`, `volt_load` - Mediciones de voltaje en V (0-50V)
+- `amp_panel`, `amp_bat`, `amp_load` - Mediciones de corriente en A
 
-## Cambiar Configuración
+Cada tabla registra los siguientes campos:
+- `timestamp`: fecha y hora de registro automático
+- `value`: valor numérico de la lectura
 
-Editar `.env`:
+## Modificación de la Configuración
+
+Para cambiar parámetros del sistema, se debe editar el archivo `.env`:
 ```bash
-SERIAL_PORT=/dev/ttyUSB0      # Puerto serial
-SERIAL_BAUDRATE=9600          # Velocidad
-DB_PASSWORD=postgres           # Contraseña BD
+SERIAL_PORT=/dev/ttyUSB0       # Puerto serial de conexión
+SERIAL_BAUDRATE=9600           # Velocidad de transmisión
+DB_PASSWORD=postgres           # Contraseña de la base de datos
 ```
 
-Reiniciar servicio:
+Tras modificar el archivo, es necesario reiniciar el servicio lector:
 ```bash
 docker-compose restart serial_reader
 ```
 
-## Conectar a Base de Datos
+## Conexión a la Base de Datos
 
 ```bash
-# Acceder a PostgreSQL
+# Acceso interactivo a PostgreSQL
 docker-compose exec postgres psql -U postgres -d sensors_db
 
-# Ver últimos datos de cualquier tabla
+# Consulta de los últimos registros de las tablas
 SELECT * FROM temp_panel ORDER BY timestamp DESC LIMIT 10;
 SELECT * FROM volt_load ORDER BY timestamp DESC LIMIT 10;
 SELECT * FROM amp_load ORDER BY timestamp DESC LIMIT 10;
 
-# Ver promedio por tabla
+# Cálculo de promedios y valores extremos por tabla
 SELECT AVG(value), MAX(value), MIN(value) FROM temp_panel;
 SELECT AVG(value), MAX(value), MIN(value) FROM volt_load;
 ```
 
 ## Solución de Problemas
 
-**Puerto serial no encontrado:**
+**Puerto serial no detectado:**
 ```bash
-# Ver en dmesg
+# Inspección de los logs del kernel
 dmesg | tail -20
 
-# Cambiar permisos (temporal)
+# Modificación temporal de permisos del puerto
 sudo chmod 666 /dev/ttyUSB0
 ```
 
-**Serial Reader falla:**
+**Fallo en el servicio Serial Reader:**
 ```bash
-# Ver logs detallados
+# Visualización de logs detallados
 docker-compose logs serial_reader
 
-# Verificar velocidad coincidir con Arduino
-# Editar .env y reiniciar
+# Se debe verificar que la velocidad (baudrate) configurada coincida con la del microcontrolador.
+# En caso de error, modificar el archivo .env y reiniciar.
 ```
 
-**Sin datos en BD:**
-1. Verificar Arduino envía datos: `cat /dev/ttyUSB0`
-2. Ver logs: `docker-compose logs -f serial_reader`
-3. Revisar que JSON tenga las 7 métricas
+**Ausencia de datos en la base de datos:**
+1. Verificación del envío de datos desde el Arduino: `cat /dev/ttyUSB0`
+2. Revisión del lector serial: `docker-compose logs -f serial_reader`
+3. Confirmación de que la cadena JSON recibida contenga los nombres de métricas exactos.
 
-## Parar Sistema
+## Detención del Sistema
 
 ```bash
-# Detener (preserva datos)
+# Detención de servicios (preserva los datos)
 docker-compose stop
 
-# Eliminar contenedores (preserva datos)
+# Eliminación de contenedores (preserva los datos)
 docker-compose down
 
-# Eliminar TODO (¡cuidado!)
+# Eliminación completa, incluyendo volúmenes de datos (¡Acción destructiva!)
 docker-compose down -v
 ```
 
-## Archivos
+## Estructura de Archivos
 
-- `docker-compose.yml` - Configuración servicios
-- `backend/serial_reader.py` - Backend lector serial
-- `backend/Dockerfile.reader` - Imagen lector serial
-- `arduino_example.ino` - Ejemplo código Arduino
-- `.env` - Variables de configuración
-- `sql_scripts/init.sql` - Crear tablas en BD
-- `sql_scripts/seed.sql` - Datos de prueba para la BD
-- `backend/requirements.txt` - Dependencias de Python
-- `grafana/provisioning/` - Auto-configuración de Data Sources y Dashboards
-- `grafana/dashboards/` - Archivos JSON de los dashboards
-
+- `docker-compose.yml` - Configuración de servicios locales
+- `docker-compose.prod.yml` - Configuración para despliegue en producción
+- `backend/serial_reader.py` - Script de backend para lectura del puerto serial
+- `backend/web_app.py` - API web Flask para descarga de CSV e información de tablas
+- `backend/Dockerfile.reader` - Definición de imagen para lector serial
+- `backend/Dockerfile.web` - Definición de imagen para aplicación web
+- `backend/Dockerfile.postgres` - Definición de imagen para base de datos
+- `.env` - Variables de entorno
+- `sql_scripts/init.sql` - Creación de esquema en base de datos
+- `sql_scripts/seed.sql` - Datos de prueba iniciales
+- `backend/requirements.txt` - Dependencias del entorno Python
+- `grafana/provisioning/` - Auto-configuración de fuentes de datos y paneles
+- `grafana/dashboards/` - Modelos JSON de los dashboards
+- `grafana/Dockerfile.grafana` - Definición de imagen para Grafana
 
 ## Fuente DockerHub
 
