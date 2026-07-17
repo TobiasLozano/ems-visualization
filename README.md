@@ -174,3 +174,8 @@ docker-compose down -v
 - `backend/requirements.txt` - Dependencias de Python
 - `grafana/provisioning/` - Auto-configuración de Data Sources y Dashboards
 - `grafana/dashboards/` - Archivos JSON de los dashboards
+
+
+## Fuente DockerHub
+
+https://hub.docker.com/repositories/tobiaslozano
