@@ -70,6 +70,15 @@ services:
       - solar_net
     restart: unless-stopped
 
+  docs:
+    image: ${DOCKER_USERNAME:-tobiaslozano}/ems-docs:latest
+    container_name: solar_docs
+    ports:
+      - "8080:80"
+    networks:
+      - solar_net
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   grafana_data:

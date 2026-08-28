@@ -309,8 +309,12 @@
             const end = new Date();
             const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
             
-            const startStr = start.toISOString().slice(0, 19).replace('T', ' ');
-            const endStr = end.toISOString().slice(0, 19).replace('T', ' ');
+            const formatLocal = (d) => {
+                const pad = (n) => n.toString().padStart(2, '0');
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            };
+            const startStr = formatLocal(start);
+            const endStr = formatLocal(end);
 
             col.innerHTML = `
                 <div class="card h-100">
@@ -338,10 +342,10 @@
                                 </button>
                             </div>
                             <div class="mb-2">
-                                <input type="text" class="form-control form-control-sm" id="start-${table.name}" value="${startStr}" placeholder="INICIO (YYYY-MM-DD HH:mm:ss)" required>
+                                <input type="datetime-local" step="1" class="form-control form-control-sm" id="start-${table.name}" value="${startStr}" required>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control form-control-sm" id="end-${table.name}" value="${endStr}" placeholder="FIN (YYYY-MM-DD HH:mm:ss)" required>
+                                <input type="datetime-local" step="1" class="form-control form-control-sm" id="end-${table.name}" value="${endStr}" required>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="bi bi-download me-1"></i> EXPORTAR RAW (.CSV)
@@ -394,9 +398,9 @@
                 }
 
                 if (data && data.from && data.to) {
-                    // Limpiamos un poco el formato para que sea más amigable
+                    // Ajustar el formato para el input datetime-local
                     const formatGrafanaTime = (timeStr) => {
-                        return timeStr.replace('T', ' ').replace('Z', '');
+                        return timeStr.replace('Z', '').slice(0, 19);
                     };
 
                     document.getElementById(`start-${tableName}`).value = formatGrafanaTime(data.from);
