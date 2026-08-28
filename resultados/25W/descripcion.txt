@@ -1,0 +1,19 @@
+================================================================================
+                RESULTADOS: GESTIÓN DE ENERGÍA - 25 W
+================================================================================
+Timestamp Inicio: 2026-05-26T18:17:32.780Z
+Timestamp Fin:    2026-05-26T19:03:37.471Z
+
+DESCRIPCIÓN DEL ENSAYO:
+En la condición de alta demanda (25 W), se validó la respuesta sostenida del sistema 
+ante la necesidad de respaldo energético de emergencia.
+
+RESULTADOS CLAVE:
+- Conmutación automática sostenida al modo de respaldo de batería (BAT_CV).
+- Manejo de corrientes de descarga pico de hasta 2.5 A.
+- Continuidad de suministro garantizada para la carga en todo momento.
+
+IMÁGENES Y ARCHIVOS ASOCIADOS:
+- prueba_25w.png: Captura de la telemetría en Grafana para la prueba de 25 W.
+- datos_25W.xlsx: Mediciones tabuladas de todas las tablas de sensores.
+================================================================================

@@ -1,0 +1,18 @@
+================================================================================
+                RESULTADOS: GESTIÓN DE ENERGÍA - 15 W
+================================================================================
+Timestamp Inicio: 2026-05-26T17:21:44.462Z
+Timestamp Fin:    2026-05-26T17:45:31.778Z
+
+DESCRIPCIÓN DEL ENSAYO:
+En esta prueba de gestión de energía con una demanda constante de 15 W en la carga, 
+se evaluó el comportamiento del sistema ante la generación fotovoltaica.
+
+RESULTADOS CLAVE:
+- El panel solar cubrió la demanda energética de forma casi autónoma.
+- Mínima intervención del sistema de baterías durante la operación.
+
+IMÁGENES Y ARCHIVOS ASOCIADOS:
+- prueba_15w.png: Captura de la telemetría en Grafana para la prueba de 15 W.
+- datos_15W.xlsx: Mediciones tabuladas de todas las tablas de sensores.
+================================================================================

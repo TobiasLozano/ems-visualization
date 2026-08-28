@@ -1,0 +1,21 @@
+================================================================================
+                    RESULTADOS: CARGA DE BATERÍA (CC/CV)
+================================================================================
+Timestamp Inicio: 2026-05-13T15:54:50.256Z
+Timestamp Fin:    2026-05-13T16:24:24.331Z
+
+DESCRIPCIÓN DEL ENSAYO:
+Para la prueba de carga de batería, se utilizó una fuente fija de 24 V para 
+confirmar la correcta implementación del perfil de carga CC/CV (Corriente Constante /
+Voltaje Constante) gestionado por el microcontrolador STM32.
+
+RESULTADOS CLAVE:
+- Regulación exitosa de corriente de carga a 1 A en la etapa de corriente constante.
+- Regulación exitosa de voltaje a 12.6 V en la etapa de voltaje constante.
+- Eficiencia experimental obtenida del sistema: 53.6%.
+
+IMÁGENES Y ARCHIVOS ASOCIADOS:
+- carga_1.png: Gráfica de telemetría de corriente y voltaje durante el proceso de carga.
+- carga_2.png: Detalle de estabilización de las curvas en Grafana.
+- datos_Carga_Bateria.xlsx: Mediciones tabuladas de todas las tablas de sensores.
+================================================================================

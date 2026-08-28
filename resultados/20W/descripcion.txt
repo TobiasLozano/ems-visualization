@@ -1,0 +1,18 @@
+================================================================================
+                RESULTADOS: GESTIÓN DE ENERGÍA - 20 W
+================================================================================
+Timestamp Inicio: 2026-05-25T18:40:53.847Z
+Timestamp Fin:    2026-05-25T19:28:55.012Z
+
+DESCRIPCIÓN DEL ENSAYO:
+En la prueba de gestión de energía con demanda de 20 W, se analizó el comportamiento 
+dinámico del sistema ante variaciones e insuficiencia en la irradiancia solar.
+
+RESULTADOS CLAVE:
+- La batería compensó activamente los déficits de generación solar.
+- El bus DC de la microrred se mantuvo estable durante toda la prueba.
+
+IMÁGENES Y ARCHIVOS ASOCIADOS:
+- prueba_20w.png: Captura de la telemetría en Grafana para la prueba de 20 W.
+- datos_20W.xlsx: Mediciones tabuladas de todas las tablas de sensores.
+================================================================================

@@ -1,0 +1,142 @@
+================================================================================
+          DESCRIPCIÓN DE RESULTADOS, SETUP GENERAL Y SISTEMA DE TELEMETRÍA
+                           SISTEMA EMS MICROGRID DC
+================================================================================
+
+1. DESCRIPCIÓN DEL SETUP GENERAL DE PRUEBAS
+--------------------------------------------------------------------------------
+Imagen de Referencia: setup.png
+
+El setup experimental consiste en una microrred DC modular diseñada para la gestión
+eficiente de energía y almacenamiento en baterías. Sus componentes principales son:
+
+- Prototipo Electrónico DC-DC: Basado en convertidores DC-DC (convertidor Buck para 
+  la regulación de carga de batería y convertidor Boost para elevar la tensión hacia
+  la carga).
+- Unidad de Control: Microcontrolador STM32 encargado de ejecutar los algoritmos 
+  de conmutación, control de modos de operación (CC/CV, respaldo por batería, 
+  protección térmica) y digitalización de señales analógicas.
+- Carga de Validación: Carga resistiva calibrada de 15 Ω para simular el consumo 
+  energético del sistema.
+- Fuentes de Energía: Fuente de laboratorio de 24 V fija para pruebas de carga de 
+  batería y panel fotovoltaico como fuente renovable principal.
+- Instrumentación y Sensores: Sensores de voltaje, corriente (módulos ACS712/INA) y
+  sensores de temperatura integrados en los módulos térmicos de panel y batería.
+
+
+2. ARQUITECTURA Y FUNCIONAMIENTO DEL DASHBOARD DE TELEMETRÍA (GRAFANA)
+--------------------------------------------------------------------------------
+Imagen de Referencia: dashboard.png
+
+El sistema implementa un entorno de telemetría y adquisición de datos en tiempo real 
+desplegado mediante contenedores Docker:
+
+- Lectura y Adquisición (serial_reader): Servicio en Python que se conecta al 
+  puerto serie (/dev/ttyUSB0) a 9600 baudios para recibir la trama enviada por el 
+  microcontrolador STM32.
+- Base de Datos Relacional (solar_postgres): Base de datos PostgreSQL que almacena
+  las series temporales de datos en 8 tablas independientes:
+  * volt_panel, amp_panel (Voltaje y Corriente del Panel Solar)
+  * volt_bat, amp_bat     (Voltaje y Corriente de la Batería)
+  * volt_load, amp_load   (Voltaje y Corriente de la Carga)
+  * temp_panel, temp_bat  (Temperaturas de Panel y Batería)
+- Visualización en Tiempo Real (solar_grafana): Dashboard interactivo accesible 
+  en el puerto 3000 (usuario: Admin, password: admin) denominado "Sistema EMS - 
+  Microgrid DC". Permite visualizar:
+  * Paneles de Potencia Instantánea: Calculados como P = V * I para Panel, Batería 
+    y Carga.
+  * Curvas de Voltaje y Corriente: Gráficas dinámicas de comportamiento eléctrico.
+  * Monitoreo Térmico: Indicadores de temperatura en tiempo real para detección de
+    sobrecalentamiento.
+
+
+3. ORGANIZACIÓN Y ANÁLISIS DETALLADO DE LAS PRUEBAS
+--------------------------------------------------------------------------------
+
+[A] PRUEBA: CARGA DE BATERÍA (Perfil CC/CV)
+- Ubicación: resultados/Carga_Bateria/
+- Imágenes de Referencia: carga_1.png, carga_2.png
+- Archivo de Datos: datos_Carga_Bateria.xlsx
+- Intervalo Temporal: 2026-05-13T15:54:50.256Z a 2026-05-13T16:24:24.331Z
+- Descripción y Resultados: 
+  Para evaluar el perfil de carga de la batería, se utilizó la fuente fija de 24 V. 
+  El sistema STM32 reguló con éxito la corriente en la etapa de Corriente Constante (CC) 
+  a 1 A y el voltaje en la etapa de Voltaje Constante (CV) a 12.6 V, alcanzando una 
+  eficiencia experimental del 53.6%. Las imágenes carga_1.png y carga_2.png exhiben 
+  las curvas características de estabilización de tensión y corriente.
+
+[B] PRUEBA: GESTIÓN DE ENERGÍA A 15 W
+- Ubicación: resultados/15W/
+- Imagen de Referencia: prueba_15w.png
+- Archivo de Datos: datos_15W.xlsx
+- Intervalo Temporal: 2026-05-26T17:21:44.462Z a 2026-05-26T17:45:31.778Z
+- Descripción y Resultados:
+  En este ensayo bajo demanda de 15 W, el panel solar suministró la potencia requerida 
+  de forma prácticamente autónoma. Como se aprecia en prueba_15w.png, la intervención 
+  de la batería fue mínima, confirmando que la generación renovable cubrió el consumo 
+  en su totalidad.
+
+[C] PRUEBA: GESTIÓN DE ENERGÍA A 20 W
+- Ubicación: resultados/20W/
+- Imagen de Referencia: prueba_20w.png
+- Archivo de Datos: datos_20W.xlsx
+- Intervalo Temporal: 2026-05-25T18:40:53.847Z a 2026-05-25T19:28:55.012Z
+- Descripción y Resultados:
+  Al incrementar el consumo a 20 W y presentarse variaciones en la irradiancia solar, 
+  el sistema de control activó la batería para compensar dinámicamente el déficit de 
+  potencia. La gráfica en prueba_20w.png muestra cómo la corriente de batería se ajusta 
+  para mantener constante el voltaje del bus DC de la carga.
+
+[D] PRUEBA: GESTIÓN DE ENERGÍA A 25 W (Modo Respaldo BAT_CV)
+- Ubicación: resultados/25W/
+- Imagen de Referencia: prueba_25w.png
+- Archivo de Datos: datos_25W.xlsx
+- Intervalo Temporal: 2026-05-26T18:17:32.780Z a 2026-05-26T19:03:37.471Z
+- Descripción y Resultados:
+  Bajo condición de alta demanda de 25 W, el sistema conmutó automáticamente al modo 
+  de respaldo de batería (BAT_CV) de forma sostenida. En prueba_25w.png se destacan 
+  las corrientes de descarga pico de hasta 2.5 A suministradas por la batería para 
+  preservar la continuidad del servicio eléctrico hacia la carga resistiva.
+
+[E] PRUEBA: PROTECCIÓN TÉRMICA DE BATERÍA
+- Ubicación: resultados/Termica/
+- Imágenes de Referencia: termica_1.png, termica_2.png
+- Archivo de Datos: datos_Termica.xlsx
+- Intervalo Temporal: 2026-05-25T17:59:14.727Z a 2026-05-25T18:10:00.732Z
+- Descripción y Resultados:
+  Se indujo un calentamiento controlado mediante pistola de calor sobre el sensor 
+  de temperatura de la batería. Las capturas termica_1.png y termica_2.png evidencian 
+  que al superar el umbral límite de 60 °C, la lógica de control desconectó de inmediato 
+  el suministro de energía. El sistema permaneció bloqueado hasta enfriarse por debajo 
+  de la histéresis de seguridad fijada en 55 °C, tras lo cual reanudó la operación.
+
+
+4. ESTRUCTURA DE ARCHIVOS EN EL PROYECTO
+--------------------------------------------------------------------------------
+resultados/
+├── setup.png                      (Fotografía del prototipo modular hardware)
+├── dashboard.png                  (Vista general de la interfaz en Grafana)
+├── descripcion_resultados.txt    (Este documento de descripción integral)
+├── Carga_Bateria/
+│   ├── carga_1.png                (Captura 1 de la gráfica de carga CC/CV)
+│   ├── carga_2.png                (Captura 2 de la gráfica de carga CC/CV)
+│   ├── datos_Carga_Bateria.xlsx   (Valores de las 8 tablas en Excel)
+│   └── descripcion.txt            (Resumen del ensayo)
+├── 15W/
+│   ├── prueba_15w.png             (Gráfico de comportamiento a 15 W)
+│   ├── datos_15W.xlsx             (Valores de las 8 tablas en Excel)
+│   └── descripcion.txt            (Resumen del ensayo)
+├── 20W/
+│   ├── prueba_20w.png             (Gráfico de comportamiento a 20 W)
+│   ├── datos_20W.xlsx             (Valores de las 8 tablas en Excel)
+│   └── descripcion.txt            (Resumen del ensayo)
+├── 25W/
+│   ├── prueba_25w.png             (Gráfico de comportamiento a 25 W)
+│   ├── datos_25W.xlsx             (Valores de las 8 tablas en Excel)
+│   └── descripcion.txt            (Resumen del ensayo)
+└── Termica/
+    ├── termica_1.png              (Captura 1 del disparo por sobretemperatura)
+    ├── termica_2.png              (Captura 2 del restablecimiento por histéresis)
+    ├── datos_Termica.xlsx         (Valores de las 8 tablas en Excel)
+    └── descripcion.txt            (Resumen del ensayo)
+================================================================================

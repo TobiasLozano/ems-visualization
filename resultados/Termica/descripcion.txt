@@ -1,0 +1,20 @@
+================================================================================
+               RESULTADOS: PROTECCIÓN TÉRMICA DE BATERÍA
+================================================================================
+Timestamp Inicio: 2026-05-25T17:59:14.727Z
+Timestamp Fin:    2026-05-25T18:10:00.732Z
+
+DESCRIPCIÓN DEL ENSAYO:
+Validación de los algoritmos de protección térmica mediante estimulación controlada 
+con pistola de calor aplicada directamente sobre el sensor de temperatura de la batería.
+
+RESULTADOS CLAVE:
+- Desactivación inmediata del suministro al superar el umbral de 60 °C.
+- Histéresis de recuperación de 55 °C confirmada para el restablecimiento seguro.
+- Garantía de la seguridad física e integridad del banco de almacenamiento.
+
+IMÁGENES Y ARCHIVOS ASOCIADOS:
+- termica_1.png: Captura del evento de disparo por sobretemperatura (>60 °C).
+- termica_2.png: Captura de la etapa de enfriamiento y restablecimiento (histéresis 55 °C).
+- datos_Termica.xlsx: Mediciones tabuladas de todas las tablas de sensores.
+================================================================================

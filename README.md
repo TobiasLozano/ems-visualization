@@ -1,183 +1,100 @@
-# Sistema Solar - Monitoreo en Tiempo Real
+# Sistema EMS — Microgrid DC
 
-Sistema Docker para lectura de datos de sensores vía USB-TTL desde dispositivos Arduino/ESP32 y visualización del histórico en un frontend web.
+El **Energy Management System (EMS)** para Microrredes DC es una plataforma integral de monitoreo, control y adquisición de datos. Permite gestionar de manera inteligente la energía proveniente de un panel fotovoltaico y una batería de respaldo hacia una carga, utilizando un microcontrolador STM32 y una arquitectura de software basada en Docker.
 
-## Requisitos
+## Características Principales
 
-- Docker y Docker Compose instalados.
-- Dispositivo Arduino o ESP32 con sensores, conectado mediante interfaz USB-TTL.
-- Permisos adecuados en el puerto serial del sistema operativo.
+*   **Firmware de Control (STM32):** Algoritmo MPPT (Perturbar y Observar) para máxima extracción solar y regulación CV para gestión térmica de batería.
+*   **Adquisición Web:** Uso de **Web Serial API** para lectura directa de datos del microcontrolador desde el navegador sin necesidad de drivers adicionales.
+*   **Backend Completo:** Almacenamiento en **PostgreSQL** y API construida en **Flask**.
+*   **Visualización:** Dashboard en tiempo real autoconfigurado con **Grafana**.
+*   **Documentación:** Sitio web interactivo generado con **Docusaurus**.
 
-## Verificación del puerto serial
+---
 
-```bash
-# Listar puertos disponibles
-ls /dev/ttyUSB*
+## 🚀 Guía de Inicio Rápido (Desarrollo Local)
 
-# Si aparece /dev/ttyUSB0, el puerto está listo para usarse.
-# En caso de detectar un puerto diferente, es necesario actualizar el archivo .env.
-```
+Para ejecutar el sistema completo de visualización y base de datos en una máquina local:
 
-## Arranque del Sistema (Localmente)
+### 1. Requisitos Previos
+*   [Docker](https://docs.docker.com/get-docker/) y [Docker Compose](https://docs.docker.com/compose/install/) instalados.
+*   Dispositivo STM32 (o Arduino/ESP32) con el firmware cargado y conectado por USB.
 
-```bash
-# Construcción y levantamiento de contenedores
-docker-compose up -d
-
-# Verificación del estado de los contenedores
-docker-compose ps
-
-# Visualización de logs en tiempo real
-docker-compose logs -f serial_reader
-```
-
-## Publicación y Ejecución con DockerHub
-
-Para publicar imágenes en DockerHub (con el backup de la base de datos ya incluido) y permitir su ejecución en otros servidores, se debe seguir el siguiente procedimiento:
-
-1. **Configuración del usuario de DockerHub:**
-   En el archivo `.env`, se debe agregar la variable `DOCKER_USERNAME` con el usuario correspondiente:
-   ```bash
-   DOCKER_USERNAME=usuario_dockerhub
-   ```
-
-2. **Construcción y subida de imágenes:**
-   ```bash
-   # Inicio de sesión en DockerHub
-   docker login
-   
-   # Construcción de imágenes utilizando los Dockerfiles
-   docker-compose build
-   
-   # Subida de las imágenes al repositorio en DockerHub
-   docker-compose push
-   ```
-
-3. **Ejecución en entorno de despliegue:**
-   Para desplegar el sistema, únicamente se requieren los archivos `docker-compose.yml` y `.env`. Al ejecutar:
-   ```bash
-   docker-compose up -d
-   ```
-   Las imágenes se descargarán automáticamente desde DockerHub, integrando los datos de la base de datos (backup) y la configuración preestablecida de Grafana.
-
-## Acceso a Grafana y Portal Web
-
-- **Portal Web (Sistema EMS):** `http://localhost:5000`
-- **Grafana:** `http://localhost:3000`
-
-> Grafana está incluido en el stack para visualizaciones avanzadas, actuando como componente principal para la observación de datos. Tanto la base de datos como los dashboards se autoconfiguran durante el inicio del contenedor.
-
-## Datos Esperados
-
-El dispositivo Arduino/ESP32 debe enviar un objeto JSON cada 5 segundos con el siguiente formato:
-
-```json
-{
-  "temp_panel": 45.2,
-  "temp_bat": 42.1,
-  "volt_panel": 48.5,
-  "amp_panel": 3.2,
-  "volt_bat": 48.3,
-  "amp_bat": 2.8,
-  "volt_load": 48.1,
-  "amp_load": 1.5
-}
-```
-
-Estos datos son almacenados en 8 tablas de tipo time-series (una por cada sensor):
-- `temp_panel`, `temp_bat` - Mediciones de temperatura en °C
-- `volt_panel`, `volt_bat`, `volt_load` - Mediciones de voltaje en V (0-50V)
-- `amp_panel`, `amp_bat`, `amp_load` - Mediciones de corriente en A
-
-Cada tabla registra los siguientes campos:
-- `timestamp`: fecha y hora de registro automático
-- `value`: valor numérico de la lectura
-
-## Modificación de la Configuración
-
-Para cambiar parámetros del sistema, se debe editar el archivo `.env`:
-```bash
-SERIAL_PORT=/dev/ttyUSB0       # Puerto serial de conexión
-SERIAL_BAUDRATE=9600           # Velocidad de transmisión
-DB_PASSWORD=postgres           # Contraseña de la base de datos
-```
-
-Tras modificar el archivo, es necesario reiniciar el servicio lector:
-```bash
-docker-compose restart serial_reader
-```
-
-## Conexión a la Base de Datos
+### 2. Levantar los Servicios Docker
+Clona el repositorio y ejecuta Docker Compose para construir y levantar los contenedores:
 
 ```bash
-# Acceso interactivo a PostgreSQL
-docker-compose exec postgres psql -U postgres -d sensors_db
+git clone https://github.com/TobiasLozano/ems-visualization.git
+cd ems-visualization
 
-# Consulta de los últimos registros de las tablas
-SELECT * FROM temp_panel ORDER BY timestamp DESC LIMIT 10;
-SELECT * FROM volt_load ORDER BY timestamp DESC LIMIT 10;
-SELECT * FROM amp_load ORDER BY timestamp DESC LIMIT 10;
-
-# Cálculo de promedios y valores extremos por tabla
-SELECT AVG(value), MAX(value), MIN(value) FROM temp_panel;
-SELECT AVG(value), MAX(value), MIN(value) FROM volt_load;
+# Construye e inicia PostgreSQL, Flask App y Grafana
+docker compose -f docker-compose.yml up -d --build
 ```
 
-## Solución de Problemas
+### 3. Acceder al Sistema
+Una vez que los contenedores estén corriendo, abre tu navegador web:
 
-**Puerto serial no detectado:**
-```bash
-# Inspección de los logs del kernel
-dmesg | tail -20
+*   **Aplicación Web (Gestión y Adquisición):** [http://localhost:5000](http://localhost:5000)
+    *   *Usa el botón "Conectar Puerto Serial" para iniciar la lectura de datos desde el hardware.*
+*   **Grafana (Visualización):** [http://localhost:3000](http://localhost:3000)
+    *   **Usuario:** `admin`
+    *   **Contraseña:** `admin`
+    *   *(El dashboard "Sistema EMS - Microgrid DC" y la conexión a la base de datos ya están configurados automáticamente).*
 
-# Modificación temporal de permisos del puerto
-sudo chmod 666 /dev/ttyUSB0
-```
+---
 
-**Fallo en el servicio Serial Reader:**
-```bash
-# Visualización de logs detallados
-docker-compose logs serial_reader
+## 📚 Documentación del Proyecto
 
-# Se debe verificar que la velocidad (baudrate) configurada coincida con la del microcontrolador.
-# En caso de error, modificar el archivo .env y reiniciar.
-```
+El repositorio incluye una documentación exhaustiva (arquitectura, parámetros de firmware, API) construida con Docusaurus.
 
-**Ausencia de datos en la base de datos:**
-1. Verificación del envío de datos desde el Arduino: `cat /dev/ttyUSB0`
-2. Revisión del lector serial: `docker-compose logs -f serial_reader`
-3. Confirmación de que la cadena JSON recibida contenga los nombres de métricas exactos.
-
-## Detención del Sistema
+Para visualizarla localmente:
 
 ```bash
-# Detención de servicios (preserva los datos)
-docker-compose stop
+# Requiere Node.js instalado
+cd docs
+npm install
+npm run start
+```
+La documentación estará disponible en `http://localhost:3000` (o el puerto que asigne Node.js, habitualmente el 3000, si Grafana ya lo está usando, Node usará el 3001).
 
-# Eliminación de contenedores (preserva los datos)
-docker-compose down
+---
 
-# Eliminación completa, incluyendo volúmenes de datos (¡Acción destructiva!)
-docker-compose down -v
+## ⚙️ Métodos de Extracción de Datos
+
+El sistema soporta dos formas de leer los datos seriales del microcontrolador:
+
+1.  **Modo Web (Recomendado):** A través de la Web App en `http://localhost:5000` usando Web Serial API. *Nota: Para usar esto en un servidor en la nube, se requiere obligatoriamente HTTPS.*
+2.  **Modo Script (Standalone):** Ejecutando el script de Python localmente. Ideal para depuración sin abrir el navegador.
+    ```bash
+    pip install pyserial psycopg2-binary python-dotenv
+    python backend/serial_reader.py
+    ```
+
+---
+
+## 🌍 Despliegue en Producción
+
+Para desplegar este sistema en un servidor VPS o en la nube (ej. AWS, DigitalOcean), se recomienda usar las imágenes preconstruidas publicadas en Docker Hub para evitar compilar en el servidor de destino.
+
+### 1. Ejecutar en el Servidor
+En el servidor remoto, solo necesitas el archivo de producción:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d
 ```
 
-## Estructura de Archivos
+### 2. Contexto Seguro (HTTPS)
+Debido a que la Web Serial API requiere un contexto seguro para acceder a los puertos USB del equipo cliente, **es obligatorio configurar un proxy inverso con SSL** (ej. Nginx + Let's Encrypt). 
 
-- `docker-compose.yml` - Configuración de servicios locales
-- `docker-compose.prod.yml` - Configuración para despliegue en producción
-- `backend/serial_reader.py` - Script de backend para lectura del puerto serial
-- `backend/web_app.py` - API web Flask para descarga de CSV e información de tablas
-- `backend/Dockerfile.reader` - Definición de imagen para lector serial
-- `backend/Dockerfile.web` - Definición de imagen para aplicación web
-- `backend/Dockerfile.postgres` - Definición de imagen para base de datos
-- `.env` - Variables de entorno
-- `sql_scripts/init.sql` - Creación de esquema en base de datos
-- `sql_scripts/seed.sql` - Datos de prueba iniciales
-- `backend/requirements.txt` - Dependencias del entorno Python
-- `grafana/provisioning/` - Auto-configuración de fuentes de datos y paneles
-- `grafana/dashboards/` - Modelos JSON de los dashboards
-- `grafana/Dockerfile.grafana` - Definición de imagen para Grafana
+En la [Documentación Oficial del Proyecto (carpeta docs/)](./docs/docs/software/despliegue-docker.md) se encuentra la guía paso a paso para configurar Nginx y Certbot.
 
-## Fuente DockerHub
+---
 
-https://hub.docker.com/repositories/tobiaslozano
+## 📂 Estructura del Repositorio
+
+*   `/backend` - API REST en Flask y script lector de Python.
+*   `/docs` - Código fuente de la documentación en Docusaurus.
+*   `/firmware` - Código `.ino` para el microcontrolador STM32.
+*   `/grafana` - Archivos de aprovisionamiento (datasources y dashboards json).
+*   `/resultados` - Evidencias y capturas de los ensayos realizados.
+*   `/sql_scripts` - Scripts de creación de esquemas para PostgreSQL.

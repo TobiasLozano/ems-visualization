@@ -19,25 +19,25 @@ services:
       - solar_net
     restart: unless-stopped
 
-  serial_reader:
-    image: ${DOCKER_USERNAME:-tobiaslozano}/ems-reader:latest
-    container_name: solar_reader
-    environment:
-      SERIAL_PORT: ${SERIAL_PORT:-/dev/ttyACM0}
-      SERIAL_BAUDRATE: ${SERIAL_BAUDRATE:-9600}
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: ${DB_NAME:-sensors_db}
-      DB_USER: ${DB_USER:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD:-postgres}
-    devices:
-      - /dev/ttyACM0:/dev/ttyACM0
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - solar_net
-    restart: unless-stopped
+#  serial_reader:
+#    image: ${DOCKER_USERNAME:-tobiaslozano}/ems-reader:latest
+#    container_name: solar_reader
+#    environment:
+#      SERIAL_PORT: ${SERIAL_PORT:-/dev/ttyUSB0}
+#      SERIAL_BAUDRATE: ${SERIAL_BAUDRATE:-9600}
+#      DB_HOST: postgres
+#      DB_PORT: 5432
+#      DB_NAME: ${DB_NAME:-sensors_db}
+#      DB_USER: ${DB_USER:-postgres}
+#      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+#    devices:
+#      - /dev/ttyUSB0:/dev/ttyUSB0
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    networks:
+#      - solar_net
+#    restart: unless-stopped
 
   grafana:
     image: ${DOCKER_USERNAME:-tobiaslozano}/ems-grafana:latest

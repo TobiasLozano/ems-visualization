@@ -1,6 +1,7 @@
 import os
 import psycopg2
 import csv
+from datetime import datetime
 from flask import Flask, render_template, jsonify, request, Response
 from dotenv import load_dotenv
 
@@ -22,6 +23,44 @@ def get_db_connection():
         user=DB_USER,
         password=DB_PASSWORD
     )
+
+def init_db():
+    tables = {
+        'temp_panel': 'Temperatura Panel',
+        'temp_bat': 'Temperatura Batería',
+        'volt_panel': 'Voltaje Panel',
+        'amp_panel': 'Corriente Panel',
+        'volt_bat': 'Voltaje Batería',
+        'amp_bat': 'Corriente Batería',
+        'volt_load': 'Voltaje Carga',
+        'amp_load': 'Corriente Carga'
+    }
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        for table_name in tables.keys():
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {table_name} (
+                    id SERIAL PRIMARY KEY,
+                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    value FLOAT
+                );
+                CREATE INDEX IF NOT EXISTS idx_{table_name}_timestamp
+                ON {table_name}(timestamp);
+            """)
+        conn.commit()
+    except Exception as e:
+        print(f"Error inicializando BD: {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# Initialize DB on app startup
+init_db()
 
 @app.route('/')
 def index():
@@ -114,6 +153,46 @@ def download_data(table_name):
         if 'conn' in locals() and conn:
             conn.close()
         return str(e), 500
+
+@app.route('/api/serial-data', methods=['POST'])
+def receive_serial_data():
+    data = request.json
+    if not data:
+        return jsonify({'error': 'No JSON received'}), 400
+        
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        timestamp = datetime.now()
+        metricas_validas = {
+            'temp_panel', 'temp_bat', 'volt_panel', 'amp_panel',
+            'volt_bat', 'amp_bat', 'volt_load', 'amp_load'
+        }
+        
+        inserted = 0
+        for metric, value in data.items():
+            if metric in metricas_validas and isinstance(value, (int, float)):
+                cursor.execute(
+                    f"INSERT INTO {metric} (timestamp, value) VALUES (%s, %s)",
+                    (timestamp, float(value))
+                )
+                inserted += 1
+                
+        conn.commit()
+        return jsonify({'status': 'success', 'inserted': inserted}), 200
+        
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
