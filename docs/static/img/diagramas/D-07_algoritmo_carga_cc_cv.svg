@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; rx: 12px; }
+      .node-start { fill: #f0fdf4; stroke: #16a34a; stroke-width: 2; rx: 18px; }
+      .node-proc { fill: #f8fafc; stroke: #0284c7; stroke-width: 1.5; rx: 8px; }
+      .node-dec { fill: #fffbeb; stroke: #d97706; stroke-width: 1.5; }
+      .node-act { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.5; rx: 6px; }
+      .node-done { fill: #fef2f2; stroke: #dc2626; stroke-width: 1.5; rx: 8px; }
+      .text-main { fill: #0f172a; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 600; text-anchor: middle; }
+      .text-sub { fill: #475569; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; text-anchor: middle; }
+      .conn { stroke: #64748b; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .label-branch { fill: #0284c7; font-family: system-ui, sans-serif; font-size: 12px; font-weight: 700; }
+      .label-y { fill: #16a34a; font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; }
+      .label-n { fill: #dc2626; font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="620" class="bg" />
+
+  <text x="35" y="38" fill="#0f172a" font-family="system-ui, sans-serif" font-size="18" font-weight="700">Algoritmo de Carga de Batería de Litio: Perfil CC / CV</text>
+  <text x="35" y="58" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Transición automática de Corriente Constante (1.0 A) a Voltaje Constante (12.60 V) y corte seguro (MODE_DONE)</text>
+
+  <!-- Start -->
+  <rect x="385" y="80" width="150" height="40" class="node-start" />
+  <text x="460" y="105" class="text-main">Ejecutar Control</text>
+
+  <!-- Decision: Active Mode -->
+  <polygon points="460,140 550,175 460,210 370,175" class="node-dec" />
+  <text x="460" y="180" class="text-main">Modo Activo</text>
+
+  <path d="M 460 120 L 460 140" class="conn" marker-end="url(#arr)" />
+
+  <!-- LEFT BRANCH: MODE_CV -->
+  <path d="M 370 175 L 240 175 L 240 220" class="conn" marker-end="url(#arr)" />
+  <text x="270" y="165" class="label-branch">MODE_CV</text>
+
+  <!-- Decision vbat -->
+  <polygon points="240,220 310,255 240,290 170,255" class="node-dec" />
+  <text x="240" y="259" class="text-main">vbat</text>
+
+  <!-- Actions for CV -->
+  <rect x="60" y="320" width="95" height="35" class="node-act" />
+  <text x="107" y="342" class="text-main">PWM + 1</text>
+
+  <rect x="180" y="320" width="95" height="35" class="node-act" />
+  <text x="227" y="342" class="text-main">PWM - 1</text>
+
+  <rect x="300" y="320" width="125" height="35" class="node-act" />
+  <text x="362" y="342" class="text-main">PWM sin cambio</text>
+
+  <path d="M 170 255 L 107 255 L 107 320" class="conn" marker-end="url(#arr)" />
+  <text x="80" y="285" class="text-sub">&lt; 12.55 V</text>
+
+  <path d="M 240 290 L 227 320" class="conn" marker-end="url(#arr)" />
+  <text x="235" y="308" class="text-sub">&gt; 12.60 V</text>
+
+  <path d="M 310 255 L 362 255 L 362 320" class="conn" marker-end="url(#arr)" />
+  <text x="320" y="285" class="text-sub">12.55 - 12.60 V</text>
+
+  <!-- Decision Cutoff: MODE_DONE -->
+  <polygon points="240,400 370,445 240,490 110,445" class="node-dec" />
+  <text x="240" y="440" class="text-main">vbat ≥ 12.57 V</text>
+  <text x="240" y="456" class="text-main">&amp;&amp; ibat ≤ 0.35 A</text>
+
+  <path d="M 107 355 L 107 420 L 155 435" class="conn" />
+  <path d="M 227 355 L 227 400" class="conn" />
+  <path d="M 362 355 L 362 420 L 325 435" class="conn" />
+
+  <!-- If Done -> MODE_DONE -->
+  <rect x="180" y="520" width="120" height="42" class="node-done" />
+  <text x="240" y="538" class="text-main">MODE_DONE</text>
+  <text x="240" y="553" fill="#fdba74" font-family="monospace" font-size="11" text-anchor="middle">PWM = 0 (Corte)</text>
+
+  <path d="M 240 490 L 240 520" class="conn" marker-end="url(#arr)" />
+  <text x="248" y="508" class="label-y">Sí</text>
+
+  <!-- RIGHT BRANCH: MODE_CC -->
+  <path d="M 550 175 L 680 175 L 680 220" class="conn" marker-end="url(#arr)" />
+  <text x="590" y="165" class="label-branch">MODE_CC</text>
+
+  <!-- Decision ibat -->
+  <polygon points="680,220 750,255 680,290 610,255" class="node-dec" />
+  <text x="680" y="259" class="text-main">ibat</text>
+
+  <!-- Actions for CC -->
+  <rect x="500" y="320" width="95" height="35" class="node-act" />
+  <text x="547" y="342" class="text-main">PWM + 1</text>
+
+  <rect x="620" y="320" width="95" height="35" class="node-act" />
+  <text x="667" y="342" class="text-main">PWM - 1</text>
+
+  <rect x="740" y="320" width="125" height="35" class="node-act" />
+  <text x="802" y="342" class="text-main">PWM sin cambio</text>
+
+  <path d="M 610 255 L 547 255 L 547 320" class="conn" marker-end="url(#arr)" />
+  <text x="530" y="285" class="text-sub">&lt; 0.95 A</text>
+
+  <path d="M 680 290 L 667 320" class="conn" marker-end="url(#arr)" />
+  <text x="675" y="308" class="text-sub">&gt; 1.05 A</text>
+
+  <path d="M 750 255 L 802 255 L 802 320" class="conn" marker-end="url(#arr)" />
+  <text x="760" y="285" class="text-sub">0.95 - 1.05 A</text>
+
+  <!-- Apply PWM -->
+  <rect x="600" y="440" width="140" height="40" class="node-proc" />
+  <text x="670" y="465" class="text-main">Aplicar PWM</text>
+
+  <!-- CC branch actions lead to Apply PWM -->
+  <path d="M 547 355 L 547 460 L 600 460" class="conn" marker-end="url(#arr)" />
+  <path d="M 667 355 L 667 440" class="conn" marker-end="url(#arr)" />
+  <path d="M 802 355 L 802 460 L 740 460" class="conn" marker-end="url(#arr)" />
+
+  <!-- Cutoff NO leads to Apply PWM -->
+  <path d="M 370 445 L 600 445" class="conn" marker-end="url(#arr)" />
+  <text x="440" y="438" class="label-n">No (continuar)</text>
+
+  <!-- Final Node -->
+  <rect x="425" y="555" width="70" height="35" class="node-start" />
+  <text x="460" y="577" class="text-main">Fin</text>
+
+  <path d="M 240 562 L 240 572 L 425 572" class="conn" marker-end="url(#arr)" />
+  <path d="M 670 480 L 670 572 L 495 572" class="conn" marker-end="url(#arr)" />
+</svg>

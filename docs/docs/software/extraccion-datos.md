@@ -3,28 +3,49 @@ sidebar_position: 2
 title: Extracción de Datos
 ---
 
+import Figure from '@site/src/components/Figure';
+
 # Extracción y Procesamiento de Datos
 
 El sistema ofrece dos vías para extraer y procesar los datos almacenados en PostgreSQL: la **interfaz web** y el **script Python** `serial_reader.py`.
 
-## Extracción desde la Web
+## Extracción desde la Interfaz Web
 
-La interfaz web en el puerto `:5000` permite descargar datos en formato CSV directamente desde el navegador.
+La interfaz web dispone del módulo **"Descarga y Exportación de Datos"**, diseñado para unificar la consulta temporal y permitir la descarga individual o masiva de las variables registradas.
 
-### Paso a Paso
+<Figure
+  src="/img/software/S-02_selector_variable_descarga.png"
+  title="Selección de Variable o Paquete Consolidado para Descarga"
+  figureNumber="2.1"
+  description="Menú desplegable para elegir entre todas las variables en formato ZIP consolidado o una serie específica (voltaje, corriente o temperatura)."
+/>
 
-1. Abrir `http://<ip-servidor>:5000` en un navegador.
-2. En la sección **"Nodos de Almacenamiento"**, cada tabla muestra el conteo de filas y el tamaño en disco.
-3. Configura la **ventana de extracción** con las fechas de inicio y fin.
-4. Hacer clic en **"EXPORTAR RAW (.CSV)"**.
+### Flujo de Exportación en 3 Pasos:
 
-### Inyección de Rango desde Grafana
+1. **¿Qué datos deseas exportar?:**
+   - Selecciona **"Todas las variables (Archivo ZIP consolidado)"** para generar una descarga empaquetada de las 8 tablas.
+   - O selecciona una variable individual de la microrred (`volt_panel`, `amp_bat`, `temp_panel`, etc.).
 
-Si se está analizando un periodo específico en Grafana, se puede copiar el rango de tiempo directamente:
+2. **Definir el Rango de Tiempo:**
+   - **Accesos directos rápidos:** Presiona `5 min`, `15 min`, `1 hora`, `6 horas`, `24 horas`, `7 días` o `Todo el historial`.
+   - **Selector personalizado:** Haz clic en los campos `DESDE` y `HASTA` para abrir el calendario interactivo y especificar fecha y hora exactas.
 
-1. En Grafana, hacer clic en el selector de tiempo y copiar el JSON del rango (ej: `{"from":"2026-05-13T15:54:50.256Z","to":"2026-05-13T16:24:24.331Z"}`).
-2. En la interfaz web, hacer clic en **"INYECTAR GRAFANA_JSON"** en la tarjeta de la tabla deseada.
-3. Los campos de fecha se actualizarán automáticamente.
+<Figure
+  src="/img/software/S-02_selector_rango_fechas.png"
+  title="Selector de Rango de Fecha y Hora Personalizado"
+  figureNumber="2.2"
+  description="Selector interactivo tipo Grafana para definir el intervalo de inicio y fin de las mediciones."
+/>
+
+3. **Sincronización con Grafana ("Pegar rango desde Grafana"):**
+   - Si estás inspeccionando una ventana de tiempo en Grafana, haz clic en **"Pegar rango desde Grafana"** en la barra superior del selector.
+   - Pega la URL del dashboard o el fragmento de parámetros (ej: `?from=now-6h&to=now` o el rango en ISO) para aplicar las fechas inmediatamente en el formulario.
+
+4. **Descargar Archivo:**
+   - Haz clic en **"Exportar en CSV"** para análisis en Excel, MATLAB, Python o Pandas.
+   - Haz clic en **"Exportar en JSON"** para integración directa en servicios web o procesamiento estructurado.
+
+---
 
 ### API REST
 
@@ -65,14 +86,14 @@ Grafana ofrece una funcionalidad integrada para exportar los datos de cualquier 
 
 ### Paso a Paso en Grafana
 
-1. Abrir el panel de Grafana (`http://<ip-servidor>:3000`).
+1. Abrir el panel de Grafana (`http://<ip-servidor>:3001` o `http://localhost:3001`).
 2. Ubica la gráfica de la cual deseas extraer los datos (ej: "Voltaje de Panel").
 3. Hacer clic en el **título de la gráfica** para abrir el menú desplegable.
 4. Selecciona **Inspect** > **Data**.
 5. Se abrirá un panel lateral mostrando los datos en formato tabular.
 6. Hacer clic en el botón **Download CSV**.
 
-:::tip Opciones de Exportación
+:::tip[Opciones de Exportación]
 Al descargar desde Grafana, es posible habilitar "Data options" para aplicar transformaciones (por ejemplo, exportar la serie de tiempo formateada o extraer solo ciertos campos calculados).
 :::
 
@@ -155,7 +176,7 @@ def extraer_json(self, linea):
     return limpia[ini:fin + 1]
 ```
 
-:::tip Robustez
+:::tip[Robustez]
 Esta función es tolerante a líneas como `\x00\x00{"volt_panel":18.5}\r\n` que son comunes al iniciar la comunicación serial con microcontroladores STM32.
 :::
 
@@ -214,6 +235,6 @@ El STM32 envía una trama JSON por segundo con el siguiente formato:
 }
 ```
 
-:::info Nota
+:::info[Nota]
 Solo se almacenan las 8 métricas principales (`volt_panel`, `amp_panel`, `volt_bat`, `amp_bat`, `volt_load`, `amp_load`, `temp_panel`, `temp_bat`). Los campos filtrados (`_f`) y de control (`mode`, `pwm_*`) son usados solo por el firmware para depuración.
 :::

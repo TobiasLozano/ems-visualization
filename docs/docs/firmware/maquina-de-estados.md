@@ -155,7 +155,7 @@ void controlPanelMPPT() {
 }
 ```
 
-:::info Tasa de Convergencia
+:::info[Tasa de Convergencia]
 El paso del MPPT es de **1 unidad de duty** cada **50ms** (máximo 20 cambios/segundo). Esto permite convergencia suave sin oscilaciones bruscas que dañen los componentes.
 :::
 

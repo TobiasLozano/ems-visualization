@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 700" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; rx: 12px; }
+      .node-start { fill: #f0fdf4; stroke: #16a34a; stroke-width: 2; rx: 20px; }
+      .node-proc { fill: #f8fafc; stroke: #0284c7; stroke-width: 1.5; rx: 8px; }
+      .node-dec { fill: #fffbeb; stroke: #d97706; stroke-width: 1.5; }
+      .node-save { fill: #faf5ff; stroke: #9333ea; stroke-width: 1.5; rx: 8px; }
+      .text-main { fill: #0f172a; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 600; text-anchor: middle; }
+      .text-sub { fill: #475569; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; text-anchor: middle; }
+      .text-code { fill: #0369a1; font-family: monospace; font-size: 11px; text-anchor: middle; font-weight: 600; }
+      .conn { stroke: #64748b; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .conn-yes { stroke: #16a34a; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .conn-no { stroke: #dc2626; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .label-yes { fill: #16a34a; font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; }
+      .label-no { fill: #dc2626; font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arr-yes" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a" />
+    </marker>
+    <marker id="arr-no" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626" />
+    </marker>
+  </defs>
+
+  <rect width="760" height="700" class="bg" />
+
+  <text x="35" y="38" fill="#0f172a" font-family="system-ui, sans-serif" font-size="17" font-weight="700">Diagrama de Flujo del Script de Adquisición: serial_reader.py</text>
+  <text x="35" y="56" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Lógica de ingesta robusta, depuración de ruido serial y almacenamiento en PostgreSQL</text>
+
+  <!-- Start -->
+  <rect x="290" y="80" width="180" height="40" class="node-start" />
+  <text x="380" y="105" class="text-main">Inicio del Proceso</text>
+
+  <!-- Step 1: Config & Connect -->
+  <rect x="250" y="145" width="260" height="50" class="node-proc" />
+  <text x="380" y="166" class="text-main">Lectura .env y Configuración</text>
+  <text x="380" y="183" class="text-sub">SERIAL_PORT, BAUDRATE, credenciales DB</text>
+
+  <path d="M 380 120 L 380 145" class="conn" marker-end="url(#arr)" />
+
+  <!-- Step 2: Open connections -->
+  <rect x="240" y="215" width="280" height="50" class="node-proc" />
+  <text x="380" y="236" class="text-main">Abrir Serial (pySerial) + Connect DB</text>
+  <text x="380" y="253" class="text-sub">psycopg2.connect(sensors_db)</text>
+
+  <path d="M 380 195 L 380 215" class="conn" marker-end="url(#arr)" />
+
+  <!-- Step 3: Create tables if not exist -->
+  <rect x="260" y="285" width="240" height="45" class="node-proc" />
+  <text x="380" y="304" class="text-main">crear_tabla()</text>
+  <text x="380" y="320" class="text-code">CREATE TABLE IF NOT EXISTS [8 tablas]</text>
+
+  <path d="M 380 265 L 380 285" class="conn" marker-end="url(#arr)" />
+
+  <!-- Step 4: Read Line -->
+  <rect x="270" y="350" width="220" height="45" class="node-proc" />
+  <text x="380" y="370" class="text-main">ser.readline()</text>
+  <text x="380" y="386" class="text-sub">Espera trama ASCII por USB-TTL</text>
+
+  <path d="M 380 330 L 380 350" class="conn" marker-end="url(#arr)" />
+
+  <!-- Step 5: extraer_json() -->
+  <rect x="250" y="415" width="260" height="50" class="node-proc" />
+  <text x="380" y="435" class="text-main">extraer_json(linea)</text>
+  <text x="380" y="452" class="text-sub">Elimina bytes nulos \x00 y extrae { ... }</text>
+
+  <path d="M 380 395 L 380 415" class="conn" marker-end="url(#arr)" />
+
+  <!-- Decision: Valid JSON? -->
+  <polygon points="380,485 490,530 380,575 270,530" class="node-dec" />
+  <text x="380" y="526" class="text-main">¿JSON</text>
+  <text x="380" y="542" class="text-main">Válido?</text>
+
+  <path d="M 380 465 L 380 485" class="conn" marker-end="url(#arr)" />
+
+  <!-- If Invalid -> Return to Read -->
+  <path d="M 490 530 L 590 530 L 590 372 L 490 372" class="conn-no" marker-end="url(#arr-no)" />
+  <text x="505" y="522" class="label-no">No (descartar)</text>
+
+  <!-- If Valid -> Process & Save -->
+  <rect x="240" y="600" width="280" height="60" class="node-save" />
+  <text x="380" y="622" class="text-main">procesar_linea(linea) &amp; guardar()</text>
+  <text x="380" y="638" class="text-code">INSERT INTO [metrica] (timestamp, value)</text>
+  <text x="380" y="652" class="text-sub">Itera sobre las 8 variables válidas</text>
+
+  <path d="M 380 575 L 380 600" class="conn-yes" marker-end="url(#arr-yes)" />
+  <text x="390" y="590" class="label-yes">Sí</text>
+
+  <!-- Loop back after save -->
+  <path d="M 240 630 L 170 630 L 170 372 L 270 372" class="conn" marker-end="url(#arr)" />
+</svg>

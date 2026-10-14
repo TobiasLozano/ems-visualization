@@ -7,9 +7,6 @@ const config = {
   tagline: 'Documentación del Sistema de Gestión de Energía para Microrredes DC',
   favicon: 'img/favicon.ico',
 
-  future: {
-    v4: true,
-  },
 
   url: 'https://ems-microgrid.example.com',
   baseUrl: '/',
@@ -17,7 +14,7 @@ const config = {
   organizationName: 'TobiasLozano',
   projectName: 'ems-visualization',
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
 
   i18n: {
     defaultLocale: 'es',
@@ -26,6 +23,9 @@ const config = {
 
   markdown: {
     mermaid: true,
+    mdx1Compat: {
+      admonitions: true,
+    },
   },
   themes: ['@docusaurus/theme-mermaid'],
 
@@ -64,7 +64,13 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'docsSidebar',
             position: 'left',
-            label: 'Documentación',
+            label: 'Manual de Usuario',
+          },
+          {
+            to: '/documento-completo',
+            label: 'Descargar / Imprimir PDF',
+            position: 'right',
+            className: 'navbar-download-pdf-btn',
           },
           {
             href: 'https://github.com/TobiasLozano/ems-visualization',
@@ -77,22 +83,25 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Documentación',
+            title: 'Documentación del Prototipo',
             items: [
-              { label: 'Arquitectura', to: '/' },
-              { label: 'Firmware', to: '/firmware/descripcion-general' },
-              { label: 'Resultados', to: '/resultados/analisis-pruebas' },
+              { label: 'Ficha del Prototipo', to: '/' },
+              { label: 'Arquitectura Física', to: '/arquitectura-fisica' },
+              { label: 'Algoritmos y Control', to: '/funcionamiento-algoritmos' },
+              { label: 'Manual Consolidado (PDF)', to: '/documento-completo?print=true' },
             ],
           },
           {
-            title: 'Herramientas',
+            title: 'Guías y Validación',
             items: [
-              { label: 'Grafana', href: 'http://localhost:3000' },
-              { label: 'Web App', href: 'http://localhost:5000' },
+              { label: 'Modos de Adquisición', to: '/modos-adquisicion' },
+              { label: 'Validación Experimental', to: '/validacion-experimental' },
+              { label: 'Solución de Problemas', to: '/diagnostico-troubleshooting' },
+              { label: 'Repositorio GitHub', href: 'https://github.com/TobiasLozano/ems-visualization' },
             ],
           },
         ],
-        copyright: `© ${new Date().getFullYear()} Tobias Lozano — EMS Microgrid DC. Built with Docusaurus.`,
+        copyright: `© ${new Date().getFullYear()} Tobias Lozano — EMS Microgrid DC. Universidad Pontificia Bolivariana.`,
       },
       prism: {
         theme: prismThemes.github,

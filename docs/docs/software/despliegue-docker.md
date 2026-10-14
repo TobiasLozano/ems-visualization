@@ -11,9 +11,10 @@ El sistema EMS se distribuye como un conjunto de **imágenes Docker** preconfigu
 
 | Imagen | Contenido | Puerto |
 |--------|----------|--------|
-| `tobiaslozano/ems-postgres` | PostgreSQL 15 Alpine + script SQL de respaldo | 5432 |
+| `tobiaslozano/ems-postgres` | PostgreSQL 15 Alpine + script SQL de respaldo | 5433 (dev) / 5432 (prod) |
 | `tobiaslozano/ems-webapp` | Flask + Gunicorn + interfaz web | 5000 |
-| `tobiaslozano/ems-grafana` | Grafana con dashboards y datasource preconfigurados | 3000 |
+| `tobiaslozano/ems-grafana` | Grafana con dashboards y datasource preconfigurados | 3001 (host) -> 3000 (container) |
+| `tobiaslozano/ems-docs` | Manual interactivo Docusaurus con Nginx | 8080 |
 
 ## Archivos de Configuración
 
@@ -77,7 +78,7 @@ services:
       dockerfile: backend/Dockerfile.grafana
     image: tobiaslozano/ems-grafana:latest
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - postgres
 ```
@@ -89,8 +90,8 @@ services:
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-:::caution Puertos
-Es necesario asegurar que los puertos **5000** (Web App) y **3000** (Grafana) estén abiertos en el firewall del servidor. **No se debe exponer el puerto 5432** (PostgreSQL) al público.
+:::caution[Puertos]
+Es necesario asegurar que los puertos **5000** (Web App), **3001** (Grafana) y **8080** (Docs) estén disponibles o expuestos según la arquitectura de red. **No se debe exponer el puerto 5432** (PostgreSQL) al público.
 :::
 
 ## Variables de Entorno
@@ -111,7 +112,7 @@ El dashboard de Grafana y la conexión a la base de datos se configuran de forma
 
 Para acceder al panel:
 
-1. Abrir `http://<ip-servidor>:3000` en un navegador.
+1. Abrir `https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1` en un navegador.
 2. Ingresar con las credenciales por defecto:
    - **Usuario:** `admin`
    - **Password:** `admin`
@@ -135,11 +136,11 @@ Los dashboards se cargan automáticamente desde la carpeta `grafana/dashboards/`
 
 ## Requisitos para Web Serial API en Producción
 
-La **Web Serial API** (usada para conectar el Arduino desde el navegador) requiere un **contexto seguro**. Esto significa:
+La **Web Serial API** (usada para conectar la tarjeta STM32 desde el navegador) requiere un **contexto seguro**. Esto significa:
 
-- ✅ `http://localhost` funciona sin SSL.
-- ❌ `http://dominio-servidor.com` **NO** funciona.
-- ✅ `https://dominio-servidor.com` funciona con certificado SSL.
+- `http://localhost` funciona sin SSL.
+- `http://dominio-servidor.com` **NO** funciona.
+- `https://dominio-servidor.com` funciona con certificado SSL.
 
 ### Configuración recomendada: Nginx + Let's Encrypt
 

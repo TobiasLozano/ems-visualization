@@ -42,15 +42,15 @@ Todos los umbrales y constantes del firmware se definen como `#define` al inicio
 ```mermaid
 graph LR
     A["Voltaje Batería"] --> B{"V < 9.00V?"}
-    B -->|Sí| C["🔴 CRÍTICO<br/>Apagado inmediato"]
+    B -->|Sí| C["CRÍTICO<br/>Apagado inmediato"]
     B -->|No| D{"V < 9.50V?"}
-    D -->|Sí| E["🟡 LOW_BAT<br/>PWM desactivado"]
+    D -->|Sí| E["LOW_BAT<br/>PWM desactivado"]
     D -->|No| F{"V > 10.20V?"}
-    F -->|Sí| G["🟢 Recuperación<br/>Volver a MPPT"]
+    F -->|Sí| G["Recuperación<br/>Volver a MPPT"]
     F -->|No| E
 ```
 
-:::danger Batería 3S
+:::danger[Batería 3S]
 Los valores están calibrados para una batería **3S Li-Ion** (rango nominal 9.0V–12.6V). Si cambias la configuración de celdas, **debes recalcular todos los umbrales**.
 
 | Configuración | `VBAT_CRITICAL` | `VBAT_UNDERVOLTAGE` | `VBAT_RECOVER` |
@@ -72,9 +72,9 @@ La histéresis de **5°C** evita oscilaciones rápidas entre modos cuando la tem
 ```mermaid
 graph LR
     T["Temperatura Batería"] --> H{"T ≥ 60°C?"}
-    H -->|Sí| BLOCK["❌ Batería bloqueada<br/>Forzar PANEL_MPPT"]
+    H -->|Sí| BLOCK["Batería bloqueada<br/>Forzar PANEL_MPPT"]
     H -->|No| R{"T ≤ 55°C?"}
-    R -->|Sí| OK["✅ Batería permitida"]
+    R -->|Sí| OK["Batería permitida"]
     R -->|No| KEEP["Mantener estado actual"]
 ```
 
@@ -88,7 +88,7 @@ graph LR
 #define MODE_SWITCH_DEADTIME_MS 500UL   // Tiempo muerto entre cambios
 ```
 
-:::info Histéresis de Conmutación
+:::info[Histéresis de Conmutación]
 La diferencia entre `VBUS_TO_BAT` (16.0V) y `VBUS_TO_PANEL` (17.5V) proporciona una banda muerta de **1.5V** que impide oscilaciones rápidas entre modos.
 :::
 
@@ -141,7 +141,7 @@ amp_panel_filt = 0.90f * amp_panel_filt + 0.10f * amp_panel;
 | `volt_panel`, `volt_bus` | 0.15 | Rápida (sigue cambios de irradiancia) |
 | `volt_bat`, `amp_panel`, `amp_bat` | 0.10 | Suave (reduce ruido de sensores) |
 
-:::tip Ajuste de Filtros
+:::tip[Ajuste de Filtros]
 Un valor de `α` más alto (ej. 0.30) dará una respuesta más rápida pero más ruidosa. Un valor más bajo (ej. 0.05) dará lecturas más estables pero con mayor latencia.
 :::
 

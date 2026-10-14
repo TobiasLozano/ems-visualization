@@ -58,7 +58,7 @@ El panel solar suministró la potencia requerida de forma **prácticamente autó
 
 ![Comportamiento a 15W](/img/resultados/15W/prueba_15w.png)
 
-:::tip Observación
+:::tip[Observación]
 A 15W de demanda, el algoritmo MPPT mantuvo el punto de operación óptimo del panel sin necesidad de activar el modo `BAT_CV`, salvo en caídas momentáneas de irradiancia.
 :::
 
@@ -98,7 +98,7 @@ El sistema conmutó automáticamente al modo de respaldo de batería (`BAT_CV`) 
 
 ![Comportamiento a 25W](/img/resultados/25W/prueba_25w.png)
 
-:::warning Descarga Profunda
+:::warning[Descarga Profunda]
 A 25W sostenidos, la batería se descarga significativamente. El sistema de protección (`VBAT_UNDERVOLTAGE = 9.50V`) eventualmente desactivará la salida si la batería llega al umbral crítico.
 :::
 
@@ -137,7 +137,7 @@ sequenceDiagram
     EMS->>BAT: BAT_CV activo
 
     TEMP->>EMS: T = 61°C (¡excede 60°C!)
-    EMS->>BAT: ❌ Desactivar PWM
+    EMS->>BAT: Desactivar PWM
     EMS->>EMS: temp_bat_ok = false
     EMS->>EMS: → PANEL_MPPT
 
@@ -148,7 +148,7 @@ sequenceDiagram
 
     TEMP->>EMS: T = 54°C (≤ 55°C)
     EMS->>EMS: temp_bat_ok = true
-    EMS->>BAT: ✅ Batería permitida de nuevo
+    EMS->>BAT: Batería permitida de nuevo
 ```
 
 ---

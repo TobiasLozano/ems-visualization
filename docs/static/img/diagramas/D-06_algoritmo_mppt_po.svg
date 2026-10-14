@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; rx: 12px; }
+      .node-start { fill: #f0fdf4; stroke: #16a34a; stroke-width: 2; rx: 18px; }
+      .node-proc { fill: #f8fafc; stroke: #0284c7; stroke-width: 1.5; rx: 8px; }
+      .node-dec { fill: #fffbeb; stroke: #d97706; stroke-width: 1.5; }
+      .node-act { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.5; rx: 6px; }
+      .node-prot { fill: #fef2f2; stroke: #dc2626; stroke-width: 1.5; }
+      .text-main { fill: #0f172a; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 600; text-anchor: middle; }
+      .text-sub { fill: #475569; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; text-anchor: middle; }
+      .conn { stroke: #64748b; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .conn-p { stroke: #0284c7; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .label-y { fill: #16a34a; font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; }
+      .label-n { fill: #dc2626; font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arr-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" />
+
+  <text x="35" y="38" fill="#0f172a" font-family="system-ui, sans-serif" font-size="18" font-weight="700">Algoritmo MPPT Perturbar y Observar (P&amp;O) Modificado</text>
+  <text x="35" y="58" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Seguimiento de máxima potencia a 80 kHz con restricción activa de sobretensión en Bus DC (Vout ≤ 24.0 V)</text>
+
+  <!-- Start -->
+  <rect x="25" y="150" width="85" height="40" class="node-start" />
+  <text x="67" y="175" class="text-main">Inicio</text>
+
+  <!-- Measure V, I and calc P -->
+  <rect x="135" y="142" width="135" height="56" class="node-proc" />
+  <text x="202" y="166" class="text-main">Medir V, I</text>
+  <text x="202" y="184" class="text-sub">Calcular P = V × I</text>
+
+  <path d="M 110 170 L 135 170" class="conn" marker-end="url(#arr)" />
+
+  <!-- Decision: P > P_prev -->
+  <polygon points="340,130 405,170 340,210 275,170" class="node-dec" />
+  <text x="340" y="174" class="text-main">P &gt; P_prev</text>
+
+  <path d="M 270 170 L 275 170" class="conn" marker-end="url(#arr)" />
+
+  <!-- Decision Upper: V > V_prev (When P > P_prev is YES) -->
+  <polygon points="480,90 535,120 480,150 425,120" class="node-dec" />
+  <text x="480" y="124" class="text-main">V &gt; V_prev</text>
+
+  <path d="M 372 150 L 425 120" class="conn" marker-end="url(#arr)" />
+  <text x="390" y="132" class="label-y">Sí</text>
+
+  <!-- Decision Lower: V > V_prev (When P > P_prev is NO) -->
+  <polygon points="480,190 535,220 480,250 425,220" class="node-dec" />
+  <text x="480" y="224" class="text-main">V &gt; V_prev</text>
+
+  <path d="M 372 190 L 425 220" class="conn" marker-end="url(#arr)" />
+  <text x="390" y="212" class="label-n">No</text>
+
+  <!-- Actions for Upper -->
+  <rect x="560" y="85" width="85" height="30" class="node-act" />
+  <text x="602" y="105" class="text-main">PWM + 1</text>
+  <path d="M 535 120 L 545 100 L 560 100" class="conn" marker-end="url(#arr)" />
+  <text x="542" y="112" class="label-y">Sí</text>
+
+  <rect x="560" y="125" width="85" height="30" class="node-act" />
+  <text x="602" y="145" class="text-main">PWM - 1</text>
+  <path d="M 535 120 L 545 140 L 560 140" class="conn" marker-end="url(#arr)" />
+  <text x="542" y="132" class="label-n">No</text>
+
+  <!-- Actions for Lower -->
+  <rect x="560" y="185" width="85" height="30" class="node-act" />
+  <text x="602" y="205" class="text-main">PWM - 1</text>
+  <path d="M 535 220 L 545 200 L 560 200" class="conn" marker-end="url(#arr)" />
+  <text x="542" y="212" class="label-y">Sí</text>
+
+  <rect x="560" y="225" width="85" height="30" class="node-act" />
+  <text x="602" y="245" class="text-main">PWM + 1</text>
+  <path d="M 535 220 L 545 240 L 560 240" class="conn" marker-end="url(#arr)" />
+  <text x="542" y="232" class="label-n">No</text>
+
+  <!-- Save P_prev, V_prev -->
+  <rect x="680" y="145" width="135" height="50" class="node-proc" />
+  <text x="747" y="167" class="text-main">Guardar P, V como</text>
+  <text x="747" y="183" class="text-sub">P_prev, V_prev</text>
+
+  <!-- Connect all actions to save -->
+  <path d="M 645 100 L 660 100 L 680 155" class="conn" />
+  <path d="M 645 140 L 680 160" class="conn" />
+  <path d="M 645 200 L 680 180" class="conn" />
+  <path d="M 645 240 L 660 240 L 680 185" class="conn" />
+
+  <!-- Decision Protection: Vout >= 24.0V -->
+  <polygon points="747,230 815,265 747,300 680,265" class="node-prot" />
+  <text x="747" y="269" class="text-main">Vout ≥ 24.0 V</text>
+
+  <path d="M 747 195 L 747 230" class="conn" marker-end="url(#arr)" />
+
+  <!-- If Vout >= 24V -> Yes: PWM -1 -->
+  <rect x="600" y="325" width="85" height="35" class="node-act" />
+  <text x="642" y="347" class="text-main">PWM - 1</text>
+
+  <path d="M 680 265 L 642 265 L 642 325" class="conn" marker-end="url(#arr)" />
+  <text x="648" y="280" class="label-n">Sí (corte)</text>
+
+  <!-- Apply PWM -->
+  <rect x="705" y="325" width="130" height="35" class="node-proc" />
+  <text x="770" y="347" class="text-main">Aplicar PWM</text>
+
+  <!-- If Vout < 24V -> No: Apply directly -->
+  <path d="M 747 300 L 747 325" class="conn" marker-end="url(#arr)" />
+  <text x="755" y="315" class="label-y">No</text>
+
+  <!-- Connect PWM -1 to Apply -->
+  <path d="M 685 342 L 705 342" class="conn" marker-end="url(#arr)" />
+
+  <!-- End Node -->
+  <rect x="735" y="400" width="70" height="35" class="node-start" />
+  <text x="770" y="422" class="text-main">Fin</text>
+
+  <path d="M 770 360 L 770 400" class="conn" marker-end="url(#arr)" />
+</svg>

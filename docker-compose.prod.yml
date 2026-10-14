@@ -43,7 +43,7 @@ services:
     image: ${DOCKER_USERNAME:-tobiaslozano}/ems-grafana:latest
     container_name: solar_grafana
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - grafana_data:/var/lib/grafana
     depends_on:

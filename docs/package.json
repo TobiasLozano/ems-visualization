@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
+    "consolidate-manual": "node scripts/consolidate-manual.mjs",
+    "prestart": "node scripts/consolidate-manual.mjs",
+    "prebuild": "node scripts/consolidate-manual.mjs",
     "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
@@ -11,7 +14,8 @@
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids"
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "export-pdf": "node scripts/consolidate-manual.mjs && node scripts/export-pdf.mjs"
   },
   "dependencies": {
     "@docusaurus/core": "3.10.2",

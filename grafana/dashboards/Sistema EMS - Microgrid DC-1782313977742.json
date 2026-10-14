@@ -27,9 +27,9 @@
       "tags": [],
       "targetBlank": true,
       "title": "Ver datos",
-      "tooltip": "",
+      "tooltip": "Abrir panel de adquisición y descarga",
       "type": "link",
-      "url": "http://localhost:5000/"
+      "url": "https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/"
     }
   ],
   "panels": [

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; rx: 12px; }
+      .box { rx: 10px; stroke-width: 2px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06)); }
+      .box-net { fill: rgba(2, 132, 199, 0.04); stroke: #0284c7; stroke-width: 1.5; stroke-dasharray: 6 4; rx: 16px; }
+      .box-service { fill: #f8fafc; stroke: #0284c7; }
+      .box-pg { fill: #eff6ff; stroke: #2563eb; }
+      .box-web { fill: #f0fdf4; stroke: #16a34a; }
+      .box-gf { fill: #fffbeb; stroke: #ea580c; }
+      .box-docs { fill: #f5f3ff; stroke: #7c3aed; }
+      .box-user { fill: #f1f5f9; stroke: #475569; }
+      .title-text { fill: #0f172a; font-family: system-ui, -apple-system, sans-serif; font-size: 15px; font-weight: 700; }
+      .sub-text { fill: #475569; font-family: system-ui, -apple-system, sans-serif; font-size: 12px; }
+      .pill { rx: 4px; }
+      .pill-port { fill: #ccfbf1; }
+      .pill-port-docs { fill: #ede9fe; }
+      .pill-text { fill: #0f766e; font-family: monospace; font-size: 11px; font-weight: 700; }
+      .pill-text-docs { fill: #6d28d9; font-family: monospace; font-size: 11px; font-weight: 700; }
+      .arrow { stroke: #64748b; stroke-width: 2; stroke-linecap: round; fill: none; }
+      .arrow-hl { stroke: #0284c7; stroke-width: 2.5; stroke-linecap: round; fill: none; }
+      .arrow-head { fill: #64748b; }
+      .arrow-head-hl { fill: #0284c7; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" class="arrow-head" />
+    </marker>
+    <marker id="arr-hl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" class="arrow-head-hl" />
+    </marker>
+  </defs>
+
+  <rect width="1020" height="440" class="bg" />
+
+  <!-- Title -->
+  <text x="35" y="38" fill="#0f172a" font-family="system-ui, sans-serif" font-size="18" font-weight="700">Arquitectura de Microservicios Docker Compose</text>
+  <text x="35" y="58" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Orquestación de microservicios, red bridge aislada (solar_net) y aprovisionamiento continuo</text>
+
+  <!-- External Host / User -->
+  <rect x="25" y="150" width="140" height="130" class="box box-user" />
+  <text x="38" y="182" fill="#0f172a" font-family="system-ui, sans-serif" font-size="14" font-weight="700">👤 Operador /</text>
+  <text x="38" y="202" fill="#0f172a" font-family="system-ui, sans-serif" font-size="14" font-weight="700">Navegador</text>
+  <text x="38" y="228" class="sub-text">HTTP Web Browser</text>
+  <text x="38" y="245" class="sub-text">Web Serial Port</text>
+  <text x="38" y="262" fill="#2563eb" font-family="monospace" font-size="10" font-weight="600">Local / Cloud</text>
+
+  <!-- Docker Network Box -->
+  <rect x="190" y="85" width="805" height="325" class="box-net" />
+  <text x="210" y="115" fill="#0284c7" font-family="system-ui, sans-serif" font-size="14" font-weight="700">RED PRIVADA DOCKER: solar_net (bridge driver)</text>
+
+  <!-- Service 1: Postgres -->
+  <rect x="210" y="140" width="175" height="245" class="box box-pg" />
+  <text x="225" y="170" class="title-text">solar_postgres</text>
+  <text x="225" y="188" class="sub-text">PostgreSQL 15 Alpine</text>
+  <rect x="225" y="200" width="85" height="18" class="pill pill-port" />
+  <text x="232" y="213" class="pill-text">Port :5432</text>
+  <text x="225" y="240" class="sub-text">• sensors_db</text>
+  <text x="225" y="258" class="sub-text">• 8 tablas métricas</text>
+  <text x="225" y="276" class="sub-text">• pg_isready health</text>
+  <text x="225" y="294" class="sub-text">• init.sql + seed.sql</text>
+  <text x="225" y="312" class="sub-text">• Volumen persistente</text>
+  <text x="225" y="340" fill="#16a34a" font-family="monospace" font-size="11" font-weight="700">status: healthy</text>
+  <text x="225" y="362" fill="#64748b" font-family="monospace" font-size="10">host :5433 / :5432</text>
+
+  <!-- Service 2: Flask WebApp -->
+  <rect x="405" y="140" width="175" height="245" class="box box-web" />
+  <text x="420" y="170" class="title-text">solar_webapp</text>
+  <text x="420" y="188" class="sub-text">Flask + Gunicorn</text>
+  <rect x="420" y="200" width="85" height="18" class="pill pill-port" />
+  <text x="427" y="213" class="pill-text">Port :5000</text>
+  <text x="420" y="240" class="sub-text">• API REST Ingesta</text>
+  <text x="420" y="258" class="sub-text">• Web Serial Connector</text>
+  <text x="420" y="276" class="sub-text">• Exportador ZIP/CSV</text>
+  <text x="420" y="294" class="sub-text">• Selector temporal</text>
+  <text x="420" y="312" class="sub-text">• depends_on: pg</text>
+  <text x="420" y="340" fill="#0284c7" font-family="monospace" font-size="11" font-weight="700">service_healthy</text>
+  <text x="420" y="362" fill="#64748b" font-family="monospace" font-size="10">host :5000</text>
+
+  <!-- Service 3: Grafana -->
+  <rect x="600" y="140" width="175" height="245" class="box box-gf" />
+  <text x="615" y="170" class="title-text">solar_grafana</text>
+  <text x="615" y="188" class="sub-text">Grafana OSS</text>
+  <rect x="615" y="200" width="85" height="18" class="pill pill-port" />
+  <text x="622" y="213" class="pill-text">Port :3000</text>
+  <text x="615" y="240" class="sub-text">• Datasource auto-reg</text>
+  <text x="615" y="258" class="sub-text">• Dashboard provis.</text>
+  <text x="615" y="276" class="sub-text">• Unifilar interactivo</text>
+  <text x="615" y="294" class="sub-text">• Gauges y alarmas</text>
+  <text x="615" y="312" class="sub-text">• Exportación gráfica</text>
+  <text x="615" y="340" fill="#ea580c" font-family="monospace" font-size="11" font-weight="700">autostart: true</text>
+  <text x="615" y="362" fill="#64748b" font-family="monospace" font-size="10">host :3001</text>
+
+  <!-- Service 4: Docs -->
+  <rect x="795" y="140" width="180" height="245" class="box box-docs" />
+  <text x="810" y="170" class="title-text">solar_docs</text>
+  <text x="810" y="188" class="sub-text">Docusaurus + Nginx</text>
+  <rect x="810" y="200" width="85" height="18" class="pill pill-port-docs" />
+  <text x="817" y="213" class="pill-text-docs">Port :80</text>
+  <text x="810" y="240" class="sub-text">• Manual interactivo</text>
+  <text x="810" y="258" class="sub-text">• Anexos ingeniería</text>
+  <text x="810" y="276" class="sub-text">• Exportador PDF</text>
+  <text x="810" y="294" class="sub-text">• SSG optimizado</text>
+  <text x="810" y="312" class="sub-text">• Nginx Alpine</text>
+  <text x="810" y="340" fill="#7c3aed" font-family="monospace" font-size="11" font-weight="700">docs_ready</text>
+  <text x="810" y="362" fill="#64748b" font-family="monospace" font-size="10">host :8080</text>
+
+  <!-- Flow Arrows inside Net -->
+  <!-- WebApp to PG -->
+  <path d="M 405 240 L 385 240" class="arrow-hl" marker-end="url(#arr-hl)" />
+  <!-- Grafana to PG (curve) -->
+  <path d="M 600 310 C 510 370, 440 370, 385 310" class="arrow-hl" marker-end="url(#arr-hl)" />
+
+  <!-- Flow Arrows from User to Services -->
+  <path d="M 165 190 C 260 190, 310 190, 405 190" class="arrow" marker-end="url(#arr)" />
+  <path d="M 165 215 C 320 215, 480 215, 600 210" class="arrow" marker-end="url(#arr)" />
+  <path d="M 165 240 C 400 255, 650 255, 795 230" class="arrow" marker-end="url(#arr)" />
+</svg>

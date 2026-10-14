@@ -1,30 +1,415 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Custom CSS for EMS Microgrid DC Documentation & Academic Report
  */
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-color-primary: #0284c7;
+  --ifm-color-primary-dark: #0369a1;
+  --ifm-color-primary-darker: #075985;
+  --ifm-color-primary-darkest: #0c4a6e;
+  --ifm-color-primary-light: #38bdf8;
+  --ifm-color-primary-lighter: #7dd3fc;
+  --ifm-color-primary-lightest: #bae6fd;
+  --ifm-code-font-size: 92%;
+  --docusaurus-highlighted-code-line-bg: rgba(2, 132, 199, 0.1);
+  --ifm-font-family-base: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #38bdf8;
+  --ifm-color-primary-dark: #0ea5e9;
+  --ifm-color-primary-darker: #0284c7;
+  --ifm-color-primary-darkest: #0369a1;
+  --ifm-color-primary-light: #7dd3fc;
+  --ifm-color-primary-lighter: #bae6fd;
+  --ifm-color-primary-lightest: #e0f2fe;
+  --ifm-background-color: #0b1120;
+  --ifm-navbar-background-color: rgba(15, 23, 42, 0.9);
+  --docusaurus-highlighted-code-line-bg: rgba(56, 189, 248, 0.15);
+}
+
+/* Navbar PDF Download Button */
+.navbar-download-pdf-btn {
+  background-color: var(--ifm-color-primary);
+  color: #ffffff !important;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 6px 14px !important;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navbar-download-pdf-btn:hover {
+  background-color: var(--ifm-color-primary-dark);
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+/* Call to action card for PDF download */
+.pdf-download-card {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(56, 189, 248, 0.04) 100%);
+  border: 1px solid var(--ifm-color-primary-lighter);
+  border-radius: 10px;
+  padding: 18px 24px;
+  margin: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+[data-theme='dark'] .pdf-download-card {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%);
+  border-color: #0369a1;
+}
+
+.pdf-download-card-btn {
+  background-color: var(--ifm-color-primary);
+  color: #ffffff !important;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+  transition: all 0.2s ease;
+}
+
+.pdf-download-card-btn:hover {
+  background-color: var(--ifm-color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+}
+
+/* Card & Table Polish */
+.markdown table {
+  width: 100%;
+  display: table;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+
+.markdown table th {
+  background-color: var(--ifm-color-emphasis-100);
+  font-weight: 700;
+  text-align: left;
+}
+
+/* Figure Captions */
+.figure-container {
+  margin: 28px 0;
+  text-align: center;
+}
+
+.figure-container img {
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.figure-caption {
+  font-size: 0.88rem;
+  color: var(--ifm-color-content-secondary);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* Academic & Publication Figure Component */
+.academic-figure {
+  margin: 32px auto;
+  text-align: center;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.academic-figure-image-wrapper {
+  background: #ffffff;
+  border: 1px solid var(--ifm-color-emphasis-200, #e2e8f0);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='dark'] .academic-figure-image-wrapper {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.academic-figure-image-wrapper img[src$=".svg"] {
+  background: #ffffff;
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.academic-figure-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 6px;
+}
+
+.academic-figure-caption {
+  margin-top: 10px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--ifm-color-content-secondary, #64748b);
+  text-align: center;
+  padding: 0 8px;
+}
+
+.academic-figure-caption .figure-num {
+  font-weight: 700;
+  color: var(--ifm-color-primary, #0284c7);
+}
+
+.academic-figure-caption .figure-title {
+  font-weight: 600;
+  color: var(--ifm-color-content, #0f172a);
+}
+
+.academic-figure-caption .figure-desc {
+  color: var(--ifm-color-content-secondary, #64748b);
+}
+
+/* Ficha Técnica Card */
+.ficha-tecnica {
+  border: 2px solid var(--ifm-color-primary);
+  border-radius: 12px;
+  padding: 24px;
+  background-color: var(--ifm-card-background-color);
+  margin: 24px 0;
+}
+
+.ficha-header {
+  border-bottom: 2px solid var(--ifm-color-primary);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+/* Print Styles for PDF Compilation */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 18mm 16mm 18mm 16mm;
+  }
+
+  html, body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10pt;
+    line-height: 1.45;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide navigation, sidebar, footer, search, action buttons, and web-only headers */
+  .navbar,
+  .theme-doc-sidebar-container,
+  .theme-doc-breadcrumbs,
+  .theme-doc-toc-desktop,
+  .theme-doc-toc-mobile,
+  .theme-doc-footer-edit-meta-row,
+  .pagination-nav,
+  footer.footer,
+  button,
+  .clean-btn,
+  .pdf-download-card,
+  .manual-pdf-header {
+    display: none !important;
+  }
+
+  /* Safe container width and inner padding for print margins */
+  .main-wrapper,
+  .container,
+  .row,
+  .col {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  article,
+  .theme-doc-markdown {
+    padding: 0 !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Each chapter title (h1) starts on a fresh page */
+  h1 {
+    break-before: page !important;
+    page-break-before: always !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    color: #0369a1 !important;
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 6pt;
+    margin-top: 0 !important;
+    margin-bottom: 12pt !important;
+    font-size: 18pt !important;
+  }
+
+  /* The very first chapter starts on page 1 without an empty page */
+  h1:first-of-type,
+  .theme-doc-markdown > h1:first-of-type {
+    break-before: avoid !important;
+    page-break-before: avoid !important;
+    margin-top: 0 !important;
+  }
+
+  h2 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    margin-top: 16pt !important;
+    margin-bottom: 8pt !important;
+    color: #0f172a !important;
+    font-size: 13.5pt !important;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4pt;
+  }
+
+  h3 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    margin-top: 12pt !important;
+    margin-bottom: 6pt !important;
+    font-size: 11pt !important;
+  }
+
+  h4, h5, h6 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  p, ul, ol {
+    margin-bottom: 8pt !important;
+    orphans: 3;
+    widows: 3;
+  }
+
+  hr {
+    border: none !important;
+    border-top: 1px solid #e2e8f0 !important;
+    margin: 12pt 0 !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Eliminate empty box breakages on ficha-tecnica */
+  .ficha-tecnica {
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 8pt 0 14pt 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  table {
+    width: 100% !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    font-size: 8.5pt !important;
+    margin-bottom: 12pt !important;
+    border-collapse: collapse !important;
+  }
+
+  th, td {
+    padding: 5pt 7pt !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  th {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+  }
+
+  pre, code {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+    font-size: 8.5pt !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .alert,
+  .theme-admonition {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin: 10pt 0 !important;
+    padding: 8pt 12pt !important;
+    font-size: 9pt !important;
+  }
+
+  .figure-container,
+  .figure-container img,
+  .academic-figure,
+  .academic-figure-image-wrapper,
+  .academic-figure-img {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .academic-figure {
+    margin: 14pt auto !important;
+  }
+
+  .academic-figure-image-wrapper {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    padding: 6pt !important;
+  }
+
+  .academic-figure-img {
+    max-height: 420px !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+
+  .academic-figure-caption {
+    font-size: 8.5pt !important;
+    color: #334155 !important;
+    margin-top: 6pt !important;
+  }
+
+  .academic-figure-caption .figure-num {
+    color: #0284c7 !important;
+    font-weight: 700 !important;
+  }
+
+  .academic-figure-caption .figure-title {
+    color: #0f172a !important;
+  }
+
+  a {
+    color: #0284c7 !important;
+    text-decoration: none !important;
+  }
 }

@@ -5,8 +5,8 @@ title: Descripción General
 
 # Firmware EMS — Descripción General
 
-:::tip Código Fuente
-[📥 Descargar Firmware de Ejemplo (ems_firmware.ino)](/firmware/ems_firmware.ino)
+:::tip[Código Fuente]
+[Descargar Firmware de Ejemplo (ems_firmware.ino)](/firmware/ems_firmware.ino)
 :::
 
 El firmware del sistema EMS se ejecuta en un microcontrolador **STM32** (serie Blue Pill / STM32F103) y es responsable de:
@@ -19,17 +19,17 @@ El firmware del sistema EMS se ejecuta en un microcontrolador **STM32** (serie B
 
 ```mermaid
 graph LR
-    subgraph POWER["⚡ Fuentes"]
+    subgraph POWER["Fuentes"]
         PANEL["Panel Solar"]
         BAT["Batería 3S Li-Ion"]
     end
 
-    subgraph CONVERTERS["🔧 Convertidores DC-DC"]
+    subgraph CONVERTERS["Convertidores DC-DC"]
         BOOST["Boost<br/>(Panel → Bus)"]
         BUCK["Buck<br/>(Batería → Bus)"]
     end
 
-    subgraph SENSORS["📏 Sensores"]
+    subgraph SENSORS["Sensores"]
         INA_P["INA226<br/>0x41 - Panel"]
         INA_B["INA226<br/>0x40 - Batería"]
         INA_L["INA226<br/>0x44 - Bus/Carga"]
@@ -39,14 +39,14 @@ graph LR
         MAX["MAX6675<br/>PA8 - Temp Bat"]
     end
 
-    subgraph MCU["🧠 STM32"]
+    subgraph MCU["STM32"]
         CTRL["Control EMS<br/>(MPPT + CV)"]
         PWM_P["PWM Panel<br/>PA3 @ 80kHz"]
         PWM_B["PWM Batería<br/>PA6 @ 50kHz"]
-        UART["UART Serial<br/>115200 baud"]
+        UART["UART Serial<br/>9600 baud"]
     end
 
-    LOAD["🔌 Carga<br/>15Ω"]
+    LOAD["Carga<br/>15Ω"]
 
     PANEL --> BOOST
     BAT --> BUCK
@@ -92,7 +92,7 @@ float readVoltageCorrected(uint8_t addr) {
 }
 ```
 
-:::info Offset de 0.6V
+:::info[Offset de 0.6V]
 La corrección se aplica para compensar la caída de tensión del diodo de protección en las líneas de panel y carga. La batería tiene conexión directa.
 :::
 
@@ -119,7 +119,7 @@ float readCurrentACS(uint8_t index) {
 }
 ```
 
-:::warning Calibración
+:::warning[Calibración]
 Los valores de `acsOffsetVoltage` deben **recalibrarse** si se cambia de placa o de sensor. Para calibrar, se debe desconectar la corriente y registrar el voltaje de salida del ACS712 en reposo.
 :::
 

@@ -1,380 +1,941 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="es" data-theme="light" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema EMS - Microgrid DC</title>
-    
-    <!-- Fonts -->
+    <title>Energy Management System (EMS) para Microrredes — UPB</title>
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <style>
-        :root {
-            --bg-color: #0A0D14;
-            --surface-color: #131722;
-            --border-color: #2A2F3D;
-            --text-main: #F3F4F6;
-            --text-muted: #8B949E;
-            --accent-cyan: #00F0FF;
-            --accent-amber: #FFB000;
+        :root,
+        [data-theme="light"],
+        [data-bs-theme="light"] {
+            /* Modo Claro (Inspirado en el Portal Institucional UPB) */
+            --bg-body: #F8FAFC;
+            --bg-surface: #FFFFFF;
+            --bg-surface-elevated: #F1F5F9;
+            --bg-input: #FFFFFF;
+
+            --border-color: #E2E8F0;
+            --border-hover: #CBD5E1;
+
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-muted: #64748B;
+
+            --upb-red: #A41034;
+            --upb-red-hover: #8B0E2B;
+            --upb-red-subtle: rgba(164, 16, 52, 0.08);
+            --upb-red-text: #A41034;
+
+            --upb-gold: #B8860B;
+            --upb-gold-subtle: rgba(184, 134, 11, 0.12);
+
+            --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+            --card-shadow-hover: 0 8px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+
+            --terminal-bg: #0F172A;
+            --terminal-text: #38BDF8;
+
+            --status-green: #10B981;
+            --status-green-glow: rgba(16, 185, 129, 0.25);
         }
+
+        [data-theme="dark"],
+        [data-bs-theme="dark"] {
+            /* Modo Oscuro Institucional */
+            --bg-body: #0B0E14;
+            --bg-surface: #121722;
+            --bg-surface-elevated: #182030;
+            --bg-input: #0A0D14;
+
+            --border-color: #20293A;
+            --border-hover: #334155;
+
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+
+            --upb-red: #A41034;
+            --upb-red-hover: #8B0E2B;
+            --upb-red-subtle: rgba(164, 16, 52, 0.15);
+            --upb-red-text: #FF6685;
+
+            --upb-gold: #C59B27;
+            --upb-gold-subtle: rgba(197, 155, 39, 0.15);
+
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+            --terminal-bg: #06080C;
+            --terminal-text: #38BDF8;
+
+            --status-green: #10B981;
+            --status-green-glow: rgba(16, 185, 129, 0.4);
+        }
+
+        /* Forzar que las clases de texto y spans respondan dinámicamente al tema */
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .text-secondary {
+            color: var(--text-secondary) !important;
+        }
+
+        .text-primary {
+            color: var(--text-primary) !important;
+        }
+
+        span, p, label, div {
+            transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .card-header span:not([class*="badge"]),
+        .card-body span:not([class*="text-"]):not([class*="badge"]),
+        .section-heading span,
+        label {
+            color: var(--text-primary);
+        }
+
+        .input-group-text {
+            background-color: var(--bg-surface-elevated) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-muted) !important;
+        }
+
+        .badge.bg-secondary-subtle {
+            background-color: var(--bg-surface-elevated) !important;
+            color: var(--text-secondary) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
-        h1, h2, h3, h4, h5, .card-header, .stat-value {
-            font-family: 'Space Grotesk', sans-serif;
-        }
+
         .mono {
             font-family: 'JetBrains Mono', monospace;
         }
+
+        /* Franja institucional superior UPB */
+        .institutional-stripe {
+            height: 4px;
+            background: linear-gradient(90deg, #A41034 0%, #D31245 40%, #C59B27 100%);
+        }
+
+        /* Barra de Navegación */
         .topbar {
-            background-color: var(--surface-color);
+            background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
-        .topbar-brand {
-            font-family: 'Space Grotesk', sans-serif;
+
+        .brand-badge {
+            background: var(--upb-red);
+            color: #FFFFFF;
+            font-size: 0.72rem;
             font-weight: 700;
-            color: var(--text-main);
-            text-decoration: none;
+            letter-spacing: 1.2px;
+            padding: 4px 9px;
+            border-radius: 4px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
         }
-        .card {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 2px;
-            box-shadow: none;
-            transition: border-color 0.2s ease;
-        }
-        .card:hover {
-            border-color: var(--accent-cyan);
-            transform: none;
-            box-shadow: none;
-        }
-        .card-header {
-            background-color: transparent;
-            border-bottom: 1px solid var(--border-color);
+
+        .brand-title {
+            font-size: 1.05rem;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
             font-size: 0.75rem;
-            color: var(--text-muted);
-            border-radius: 0 !important;
-            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
         }
-        .stat-value {
-            font-size: 1.5rem;
-            color: var(--text-main);
+
+        /* Botones */
+        .btn-upb {
+            background-color: var(--upb-red);
+            border: 1px solid var(--upb-red);
+            color: #FFFFFF !important;
+            font-weight: 600;
+            font-size: 0.82rem;
+            border-radius: 5px;
+            padding: 0.45rem 1rem;
+            transition: all 0.15s ease-in-out;
         }
-        .btn-primary {
-            background-color: transparent;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            border-radius: 2px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 500;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            transition: all 0.2s;
+
+        .btn-upb:hover,
+        .btn-upb:focus {
+            background-color: var(--upb-red-hover);
+            border-color: var(--upb-red-hover);
+            color: #FFFFFF !important;
+            box-shadow: 0 2px 8px rgba(164, 16, 52, 0.25);
         }
-        .btn-primary:hover {
-            background-color: rgba(0, 240, 255, 0.1);
-            color: var(--accent-cyan);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-        .btn-danger {
-            background-color: transparent;
-            border: 1px solid var(--accent-amber);
-            color: var(--accent-amber);
-            border-radius: 2px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-        .btn-danger:hover {
-            background-color: rgba(255, 176, 0, 0.1);
-            color: var(--accent-amber);
-            border-color: var(--accent-amber);
-        }
-        .form-control {
-            background-color: var(--bg-color) !important;
+
+        .btn-secondary-custom {
+            background-color: var(--bg-surface-elevated);
             border: 1px solid var(--border-color);
-            color: var(--text-main) !important;
-            border-radius: 2px;
-            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
             font-size: 0.8rem;
+            font-weight: 500;
+            border-radius: 5px;
+            padding: 0.42rem 0.85rem;
+            transition: all 0.15s ease;
         }
-        .form-control:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: none;
+
+        .btn-secondary-custom:hover {
+            background-color: var(--border-hover);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
         }
-        .badge {
-            border-radius: 2px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: normal;
-        }
-        .badge.bg-secondary {
-            background-color: var(--border-color) !important;
-            color: var(--text-muted);
-        }
-        .badge.bg-success {
-            background-color: transparent !important;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-        }
-        
-        /* Terminal / Console Styles */
-        #serial-log {
-            background-color: #050608 !important;
+
+        /* Cards */
+        .card {
+            background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
-            color: var(--accent-cyan) !important;
-            border-radius: 2px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
         }
-        
-        /* Signature Element Animation */
-        .pulse-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--border-color);
-            display: inline-block;
-            margin-right: 8px;
+
+        .card:hover {
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--border-hover);
         }
-        .pulse-indicator.active {
-            background-color: var(--accent-cyan);
-            box-shadow: 0 0 8px var(--accent-cyan);
+
+        .card-header {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.85rem 1.25rem;
+            font-weight: 600;
         }
-        .pulse-anim {
-            animation: pulse-flash 0.3s ease-out;
-        }
-        @keyframes pulse-flash {
-            0% { box-shadow: 0 0 15px var(--accent-cyan); background-color: #fff; }
-            100% { box-shadow: 0 0 8px var(--accent-cyan); background-color: var(--accent-cyan); }
-        }
-        
-        .section-title {
+
+        /* Cabeceras de Sección */
+        .section-heading {
             font-size: 0.85rem;
-            color: var(--text-muted);
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
+            letter-spacing: 1.2px;
+            color: var(--text-secondary);
+            margin-bottom: 0.9rem;
             display: flex;
             align-items: center;
+            gap: 0.6rem;
         }
-        .section-title::after {
-            content: "";
+
+        .section-heading::after {
+            content: '';
             flex: 1;
             height: 1px;
-            background-color: var(--border-color);
-            margin-left: 1rem;
+            background: var(--border-color);
+        }
+
+        /* Quick Range Selector (Píldoras de rango) */
+        .grafana-quick-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .pill-range {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.74rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .pill-range:hover {
+            border-color: var(--upb-red);
+            color: var(--upb-red-text);
+        }
+
+        .pill-range.active {
+            background-color: var(--upb-red);
+            border-color: var(--upb-red);
+            color: #FFFFFF !important;
+        }
+
+        /* Formularios e Inputs */
+        .form-control-custom,
+        .form-select-custom {
+            background-color: var(--bg-input) !important;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary) !important;
+            font-size: 0.82rem;
+            border-radius: 5px;
+            padding: 0.45rem 0.75rem;
+            transition: border-color 0.15s;
+        }
+
+        .form-control-custom:focus,
+        .form-select-custom:focus {
+            border-color: var(--upb-red);
+            box-shadow: 0 0 0 3px var(--upb-red-subtle);
+            outline: none;
+        }
+
+        /* Terminal Serial */
+        #serial-log {
+            background-color: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--terminal-text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            height: 120px;
+            overflow-y: auto;
+            padding: 0.7rem;
+            line-height: 1.45;
+        }
+
+        /* Indicador de Estado */
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background-color: var(--text-muted);
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        .status-dot.active {
+            background-color: var(--status-green);
+            box-shadow: 0 0 8px var(--status-green-glow);
+        }
+
+        .status-pulse-anim {
+            animation: pulse-ring 0.35s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.9);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.8);
+            }
+
+            70% {
+                transform: scale(1.4);
+                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 8px var(--status-green-glow);
+            }
+        }
+
+        /* Toast Feedback */
+        .feedback-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--upb-red);
+            color: var(--text-primary);
+            padding: 0.75rem 1.15rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1050;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+
+        .feedback-toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
+
 <body>
 
-    <div class="topbar d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-3">
-            <a class="topbar-brand" href="#">
-                <i class="bi bi-cpu-fill" style="color: var(--accent-cyan);"></i> EMS_MICROGRID
-            </a>
-            <span class="badge bg-secondary">v1.0.0</span>
-        </div>
-        <div>
-            <a id="grafana-link" href="#" class="btn btn-primary btn-sm py-1 px-2" target="_blank" style="font-size: 0.65rem;">
-                <i class="bi bi-graph-up"></i> TELEMETRY_UI (GRAFANA)
-            </a>
-        </div>
-    </div>
+    <!-- Franja Institucional UPB -->
+    <div class="institutional-stripe"></div>
 
-    <div class="container-fluid px-4 py-4 mb-5">
-        
-        <h2 class="section-title">Enlace de Adquisición de Datos (DAQ)</h2>
-        <!-- Serial Connection UI -->
-        <div class="card mb-5 border-0" style="border-top: 2px solid var(--accent-cyan) !important;">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>Interfaz Serial Local</span>
-                <div class="d-flex align-items-center">
-                    <div id="data-pulse" class="pulse-indicator"></div>
-                    <span id="serial-status" class="mono text-muted" style="font-size: 0.75rem;">OFFLINE</span>
+    <!-- Barra de Navegación Principal -->
+    <header class="topbar">
+        <div class="container-fluid px-2 d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <span class="brand-badge">UPB</span>
+                <div>
+                    <div class="brand-title">Energy Management System (EMS) para Microrredes</div>
+                    <div class="brand-subtitle">Universidad Pontificia Bolivariana · Facultad de Ingenierías</div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <p class="text-muted small mb-3" style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;">
-                            > ESPERANDO_CONEXION_USB<br>
-                            > REQ:_CONTEXTO_SEGURO (HTTPS/LOCAL)
-                        </p>
-                        <button id="btn-connect-serial" class="btn btn-primary w-100 mb-2">
-                            <i class="bi bi-usb-symbol me-2"></i> Inicializar Enlace Serial
-                        </button>
-                        <button id="btn-disconnect-serial" class="btn btn-danger w-100 d-none">
-                            <i class="bi bi-x-circle me-2"></i> Cortar Enlace
-                        </button>
-                    </div>
-                    <div class="col-md-8">
-                        <div id="serial-log" class="text-start p-3 small mono" style="height: 120px; overflow-y: auto; display: none;"></div>
-                    </div>
-                </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <!-- Selector de Tema (Modo Claro / Modo Oscuro) -->
+                <button id="theme-toggle" class="btn btn-secondary-custom d-flex align-items-center gap-2"
+                    onclick="toggleTheme()" title="Alternar tema claro y oscuro">
+                    <i id="theme-icon" class="bi bi-sun-fill text-warning"></i>
+                    <span id="theme-text">Modo Claro</span>
+                </button>
+
+                <!-- Accesos directos externos -->
+                <a id="grafana-link" href="#" target="_blank"
+                    class="btn btn-secondary-custom d-flex align-items-center gap-2"
+                    title="Abrir Dashboards en Grafana">
+                    <i class="bi bi-graph-up-arrow text-danger"></i>
+                    <span>Dashboards Grafana</span>
+                </a>
+                <a id="docs-link" href="#" target="_blank"
+                    class="btn btn-secondary-custom d-flex align-items-center gap-2"
+                    title="Consultar Manual de Usuario y Referencia">
+                    <i class="bi bi-book text-primary"></i>
+                    <span>Manual del Sistema</span>
+                </a>
             </div>
         </div>
-        
-        <h2 class="section-title">Nodos de Almacenamiento (PostgreSQL)</h2>
-        
-        <div id="loading" class="my-5 d-flex justify-content-center">
-            <div class="spinner-border" style="color: var(--accent-cyan); width: 2rem; height: 2rem;" role="status">
-                <span class="visually-hidden">Cargando...</span>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="container-fluid px-3 px-md-4 py-4 flex-grow-1">
+
+        <!-- SECCIÓN 1: PANEL UNIFICADO DE EXPORTACIÓN DE TELEMETRÍA (Un solo selector global) -->
+        <section class="mb-4">
+            <div class="section-heading">
+                <i class="bi bi-cloud-arrow-down-fill text-danger"></i>
+                <span>Descarga y Exportación de Datos</span>
             </div>
-        </div>
 
-        <div id="error-container" class="alert alert-danger d-none rounded-0 border-0 border-start border-danger border-4" style="background-color: rgba(255,0,0,0.1); color: #ff6b6b;" role="alert">
-        </div>
+            <div class="card border-0" style="border-top: 3px solid var(--upb-red) !important;">
+                <div class="card-body p-4">
+                    <div class="row g-4 align-items-center">
 
-        <div class="row g-4" id="tables-container">
-            <!-- Cards will be injected here via JS -->
-        </div>
+                        <!-- Columna 1: Selección de Variable a Descargar -->
+                        <div class="col-lg-4 col-md-12">
+                            <label class="form-label fw-bold mb-1" style="font-size: 0.82rem;">
+                                <i class="bi bi-check2-circle text-danger me-1"></i> 1. ¿Qué datos deseas exportar?
+                            </label>
+                            <p class="text-secondary mb-2" style="font-size: 0.74rem;">
+                                Selecciona una variable específica o descarga el paquete consolidado completo.
+                            </p>
+                            <select id="export-table-select" class="form-select form-select-custom w-100 fw-semibold">
+                                <option value="all" selected>📦 Todas las variables (Archivo ZIP consolidado)</option>
+                                <option disabled>────────── Variables Individuales ──────────</option>
+                                <option value="amp_bat">🔋 Corriente de Batería (amp_bat)</option>
+                                <option value="volt_bat">⚡ Voltaje de Batería (volt_bat)</option>
+                                <option value="temp_bat">🌡️ Temperatura de Batería (temp_bat)</option>
+                                <option value="amp_panel">☀️ Corriente de Panel Solar (amp_panel)</option>
+                                <option value="volt_panel">🔆 Voltaje de Panel Solar (volt_panel)</option>
+                                <option value="temp_panel">🌡️ Temperatura de Panel (temp_panel)</option>
+                                <option value="amp_load">💡 Corriente de Carga (amp_load)</option>
+                                <option value="volt_load">🔌 Voltaje de Carga (volt_load)</option>
+                            </select>
+                        </div>
 
-    </div>
-
-    <footer class="text-center mt-5 py-3 border-top border-secondary">
-        <small class="text-muted">Desarrollado por <a href="https://github.com/TobiasLozano" target="_blank" class="text-info text-decoration-none">Tobias Lozano</a></small>
-    </footer>
-
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.css" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Configurar el link de Grafana de manera dinámica para Producción
-            const grafanaLink = document.getElementById('grafana-link');
-            if (grafanaLink) {
-                grafanaLink.href = window.location.protocol + '//' + window.location.hostname + ':3000';
-            }
-            
-            fetchTables();
-        });
-
-        async function fetchTables() {
-            const container = document.getElementById('tables-container');
-            const loading = document.getElementById('loading');
-            const errorContainer = document.getElementById('error-container');
-
-            try {
-                const response = await fetch('/api/tables');
-                if (!response.ok) {
-                    throw new Error(`Error de servidor: ${response.status}`);
-                }
-                const tables = await response.json();
-                
-                loading.classList.add('d-none');
-                
-                if (tables.length === 0) {
-                    errorContainer.textContent = "No se encontraron tablas de datos.";
-                    errorContainer.classList.remove('d-none');
-                    return;
-                }
-
-                tables.forEach(table => {
-                    const card = createTableCard(table);
-                    container.appendChild(card);
-                });
-
-            } catch (error) {
-                loading.classList.add('d-none');
-                errorContainer.textContent = "No se pudo cargar la información de las tablas: " + error.message;
-                errorContainer.classList.remove('d-none');
-            }
-        }
-
-        function createTableCard(table) {
-            const col = document.createElement('div');
-            col.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
-            
-            const friendlyName = table.name.toUpperCase().replace(/_/g, ' ');
-
-            const end = new Date();
-            const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
-            
-            const formatLocal = (d) => {
-                const pad = (n) => n.toString().padStart(2, '0');
-                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-            };
-            const startStr = formatLocal(start);
-            const endStr = formatLocal(end);
-
-            col.innerHTML = `
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span style="color: var(--text-main);">${friendlyName}</span>
-                        <span class="badge bg-secondary mono">${table.name}</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-3" style="border-color: var(--border-color) !important;">
-                            <div class="w-50">
-                                <div class="text-muted mb-1" style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;">Filas</div>
-                                <div class="stat-value mono" style="color: var(--accent-cyan);">${table.row_count.toLocaleString()}</div>
+                        <!-- Columna 2: Rango de Tiempo Centralizado (Estilo Grafana) -->
+                        <div class="col-lg-5 col-md-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label fw-bold mb-0" style="font-size: 0.82rem;">
+                                    <i class="bi bi-calendar3 text-danger me-1"></i> 2. Rango de tiempo
+                                </label>
+                                <button type="button"
+                                    class="btn btn-link btn-sm py-0 px-0 text-decoration-none d-flex align-items-center gap-1"
+                                    style="color: var(--upb-gold); font-size: 0.75rem; font-weight: 600;"
+                                    onclick="triggerPasteGrafanaGlobal()" title="Pegar rango copiado en Grafana">
+                                    <i class="bi bi-clipboard-check"></i>
+                                    <span>Pegar rango desde Grafana</span>
+                                </button>
                             </div>
-                            <div class="text-end w-50">
-                                <div class="text-muted mb-1" style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;">Tamaño</div>
-                                <div class="stat-value mono" style="color: var(--text-main);">${table.size}</div>
+
+                            <!-- Píldoras Rápidas (Quick Ranges) -->
+                            <div class="grafana-quick-pills mb-2">
+                                <span class="pill-range" onclick="setGlobalQuickRange(5, 'm', this)">5 min</span>
+                                <span class="pill-range" onclick="setGlobalQuickRange(15, 'm', this)">15 min</span>
+                                <span class="pill-range" onclick="setGlobalQuickRange(1, 'h', this)">1 hora</span>
+                                <span class="pill-range" onclick="setGlobalQuickRange(6, 'h', this)">6 horas</span>
+                                <span class="pill-range active" onclick="setGlobalQuickRange(24, 'h', this)">24
+                                    horas</span>
+                                <span class="pill-range" onclick="setGlobalQuickRange(7, 'd', this)">7 días</span>
+                                <span class="pill-range" onclick="setGlobalQuickRange(0, 'all', this)">Todo el
+                                    historial</span>
+                            </div>
+
+                            <!-- Campos Desde / Hasta -->
+                            <div class="row g-2">
+                                <div class="col-sm-6">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text py-0 text-muted fw-semibold"
+                                            style="font-size: 0.68rem; background: var(--bg-surface-elevated); border-color: var(--border-color);">DESDE</span>
+                                        <input type="datetime-local" step="1"
+                                            class="form-control form-control-custom mono" id="global-start-date"
+                                            required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text py-0 text-muted fw-semibold"
+                                            style="font-size: 0.68rem; background: var(--bg-surface-elevated); border-color: var(--border-color);">HASTA</span>
+                                        <input type="datetime-local" step="1"
+                                            class="form-control form-control-custom mono" id="global-end-date" required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <form onsubmit="downloadData(event, '${table.name}')" class="mt-3">
-                            <div class="d-flex justify-content-between align-items-end mb-2">
-                                <label class="form-label text-muted mb-0" style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;">Ventana de Extracción</label>
-                                <button type="button" class="btn btn-link btn-sm py-0 px-0 text-decoration-none" style="color: var(--accent-amber); font-size: 0.7rem;" onclick="pasteGrafanaRange('${table.name}')" title="Pegar JSON de Grafana">
-                                    <i class="bi bi-clipboard"></i> INYECTAR GRAFANA_JSON
+                        <!-- Columna 3: Botones de Exportación -->
+                        <div class="col-lg-3 col-md-12 text-center text-lg-start">
+                            <label class="form-label fw-bold mb-2 d-none d-lg-block" style="font-size: 0.82rem;">
+                                3. Descargar Archivo
+                            </label>
+                            <div class="d-flex flex-column gap-2">
+                                <button type="button"
+                                    class="btn btn-upb w-100 d-flex justify-content-center align-items-center gap-2 py-2"
+                                    onclick="executeDownload('csv')">
+                                    <i class="bi bi-filetype-csv fs-6"></i>
+                                    <span>Exportar en CSV</span>
+                                </button>
+                                <button type="button"
+                                    class="btn btn-secondary-custom w-100 d-flex justify-content-center align-items-center gap-2 py-2"
+                                    onclick="executeDownload('json')">
+                                    <i class="bi bi-filetype-json fs-6 text-primary"></i>
+                                    <span>Exportar en JSON</span>
                                 </button>
                             </div>
-                            <div class="mb-2">
-                                <input type="datetime-local" step="1" class="form-control form-control-sm" id="start-${table.name}" value="${startStr}" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="datetime-local" step="1" class="form-control form-control-sm" id="end-${table.name}" value="${endStr}" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-download me-1"></i> EXPORTAR RAW (.CSV)
-                            </button>
-                        </form>
+                        </div>
+
                     </div>
                 </div>
-            `;
-            return col;
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CONEXIÓN DE MEDICIÓN SERIAL (USB) -->
+        <section class="mb-4">
+            <div class="section-heading">
+                <i class="bi bi-usb-symbol text-danger"></i>
+                <span>Conexión de Medición Serial (USB)</span>
+            </div>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center py-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span style="font-size: 0.84rem;">Recepción de Datos en Tiempo Real</span>
+                        <span class="badge bg-secondary-subtle text-secondary mono" style="font-size: 0.68rem;">9600
+                            BAUD</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span id="data-pulse" class="status-dot"></span>
+                        <span id="serial-status" class="mono text-muted" style="font-size: 0.72rem;">DESCONECTADO</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-lg-4 col-md-5">
+                            <p class="text-secondary mb-3" style="font-size: 0.78rem; line-height: 1.5;">
+                                Conecta el microcontrolador (Arduino / ESP32) mediante cable USB para capturar y
+                                almacenar las variables de la microrred en tiempo real.
+                            </p>
+                            <div class="d-flex flex-column gap-2">
+                                <button id="btn-connect-serial"
+                                    class="btn btn-upb w-100 d-flex justify-content-center align-items-center gap-2">
+                                    <i class="bi bi-plug-fill"></i>
+                                    <span>Conectar Dispositivo USB</span>
+                                </button>
+                                <button id="btn-disconnect-serial"
+                                    class="btn btn-secondary-custom w-100 d-none d-flex justify-content-center align-items-center gap-2 text-danger">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    <span>Desconectar Puerto</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8 col-md-7">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-muted mono" style="font-size: 0.7rem;">TERMINAL DE MEDICIONES:</span>
+                                <button type="button"
+                                    class="btn btn-link btn-sm py-0 px-1 text-secondary text-decoration-none"
+                                    style="font-size: 0.68rem;" onclick="clearSerialLog()">
+                                    <i class="bi bi-trash3"></i> Limpiar
+                                </button>
+                            </div>
+                            <div id="serial-log">
+                                <span class="text-muted">> Esperando conexión del puerto USB...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: ESTADO Y MÉTRICAS DE LAS VARIABLES DE LA MICRORRED -->
+        <section>
+            <div class="section-heading">
+                <i class="bi bi-speedometer2 text-danger"></i>
+                <span>Variables Monitoreadas de la Microrred</span>
+            </div>
+
+            <!-- Spinner de Carga -->
+            <div id="loading" class="my-5 text-center">
+                <div class="spinner-border text-danger" style="width: 2.2rem; height: 2.2rem;" role="status">
+                    <span class="visually-hidden">Cargando métricas...</span>
+                </div>
+                <div class="text-muted mt-2 small">Consultando variables del sistema...</div>
+            </div>
+
+            <!-- Alerta de Error -->
+            <div id="error-container"
+                class="alert alert-danger d-none border-0 border-start border-danger border-4 rounded-1" role="alert">
+            </div>
+
+            <!-- Grilla Informativa de Variables -->
+            <div class="row g-3" id="tables-container">
+                <!-- Se inyecta dinámicamente -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Asistente para Pegar Rango de Grafana -->
+    <div class="modal fade" id="grafanaRangeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"
+                style="background-color: var(--bg-surface); border: 1px solid var(--border-color);">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title d-flex align-items-center gap-2" style="font-size: 0.95rem;">
+                        <i class="bi bi-clipboard-check text-warning"></i>
+                        <span>Pegar rango desde Grafana</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-secondary small mb-2">
+                        En Grafana, haz clic en el selector de tiempo y presiona <strong>Copiar rango al
+                            portapapeles</strong>. Luego pégalo en este cuadro:
+                    </p>
+                    <textarea id="grafana-paste-input" class="form-control form-control-custom w-100" rows="3"
+                        placeholder='{"from": "now-6h", "to": "now"} o rango de fechas...'></textarea>
+                    <div id="grafana-modal-error" class="text-danger small mt-2 d-none">
+                        Formato no reconocido. Asegúrate de copiar el rango de Grafana.
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+                    <button type="button" class="btn btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-upb" onclick="applyManualGrafanaRange()">Aplicar Rango</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificación -->
+    <div id="feedback-toast" class="feedback-toast">
+        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+        <span id="toast-message">Operación completada con éxito.</span>
+    </div>
+
+    <!-- Footer Institucional -->
+    <footer class="py-3 mt-auto text-center border-top"
+        style="border-color: var(--border-color) !important; background: var(--bg-surface);">
+        <div class="container-fluid">
+            <small class="text-secondary">
+                Energy Management System (EMS) para Microrredes · Desarrollado por
+                <a href="https://github.com/TobiasLozano" target="_blank" class="text-decoration-none fw-semibold"
+                    style="color: var(--upb-red);">Tobias Lozano</a>
+                · Universidad Pontificia Bolivariana
+            </small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Mapeo amigable de variables del sistema
+        const SENSOR_METADATA = {
+            'amp_bat': { label: 'Corriente en Batería', icon: 'bi-battery-half', unit: 'A', desc: 'Flujo neto de corriente de carga / descarga' },
+            'volt_bat': { label: 'Tensión en Batería', icon: 'bi-battery-charging', unit: 'V', desc: 'Tensión del banco de baterías de respaldo' },
+            'temp_bat': { label: 'Temperatura en Batería', icon: 'bi-thermometer-half', unit: '°C', desc: 'Monitoreo térmico del banco de almacenamiento' },
+            'amp_panel': { label: 'Corriente Panel Solar', icon: 'bi-lightning-charge', unit: 'A', desc: 'Generación de corriente fotovoltaica' },
+            'volt_panel': { label: 'Tensión Panel Solar', icon: 'bi-sun-fill', unit: 'V', desc: 'Punto de máxima potencia (MPPT)' },
+            'temp_panel': { label: 'Temperatura Panel', icon: 'bi-thermometer-sun', unit: '°C', desc: 'Temperatura superficial del módulo solar' },
+            'amp_load': { label: 'Corriente en Carga DC', icon: 'bi-cpu-fill', unit: 'A', desc: 'Consumo de corriente del sistema de carga' },
+            'volt_load': { label: 'Tensión en Carga DC', icon: 'bi-plug-fill', unit: 'V', desc: 'Regulación del Bus DC a 24V' }
+        };
+
+        let grafanaModalInstance = null;
+
+        // Gestión del Tema (Light / Dark)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('ems-theme') || 'light';
+            setTheme(savedTheme);
         }
 
-        function downloadData(event, tableName) {
-            event.preventDefault();
-            const startInput = document.getElementById(`start-${tableName}`).value;
-            const endInput = document.getElementById(`end-${tableName}`).value;
-            
-            if (!startInput || !endInput) {
-                alert("Por favor selecciona ambas fechas.");
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('ems-theme', theme);
+
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            if (theme === 'light') {
+                if (icon) icon.className = 'bi bi-sun-fill text-warning';
+                if (text) text.textContent = 'Modo Claro';
+            } else {
+                if (icon) icon.className = 'bi bi-moon-stars-fill text-info';
+                if (text) text.textContent = 'Modo Oscuro';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+
+            // Configurar fecha inicial: últimas 24 horas
+            initGlobalDates();
+
+            // Enlaces dinámicos
+            const host = window.location.hostname;
+            const grafanaLink = document.getElementById('grafana-link');
+            if (grafanaLink) {
+                if (host.includes('sslip.io')) {
+                    grafanaLink.href = 'https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1';
+                } else {
+                    grafanaLink.href = `http://${host}:3001`;
+                }
+            }
+            const docsLink = document.getElementById('docs-link');
+            if (docsLink) {
+                if (host.includes('sslip.io')) {
+                    docsLink.href = `http://${host}:8080`;
+                } else {
+                    docsLink.href = `http://${host}:8080`;
+                }
+            }
+
+            const modalEl = document.getElementById('grafanaRangeModal');
+            if (modalEl) {
+                grafanaModalInstance = new bootstrap.Modal(modalEl);
+            }
+
+            fetchTables();
+        });
+
+        function formatDatetimeLocal(d) {
+            const pad = (n) => n.toString().padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        }
+
+        function initGlobalDates() {
+            const end = new Date();
+            const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
+            document.getElementById('global-start-date').value = formatDatetimeLocal(start);
+            document.getElementById('global-end-date').value = formatDatetimeLocal(end);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('feedback-toast');
+            const toastMsg = document.getElementById('toast-message');
+            if (toast && toastMsg) {
+                toastMsg.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3500);
+            }
+        }
+
+        // Rangos Rápidos Globales (Estilo Grafana)
+        function setGlobalQuickRange(amount, unit, element) {
+            const end = new Date();
+            let start = new Date(end);
+
+            if (unit === 'm') {
+                start = new Date(end.getTime() - (amount * 60 * 1000));
+            } else if (unit === 'h') {
+                start = new Date(end.getTime() - (amount * 60 * 60 * 1000));
+            } else if (unit === 'd') {
+                start = new Date(end.getTime() - (amount * 24 * 60 * 60 * 1000));
+            } else if (unit === 'all') {
+                start = new Date(2025, 0, 1, 0, 0, 0);
+            }
+
+            document.getElementById('global-start-date').value = formatDatetimeLocal(start);
+            document.getElementById('global-end-date').value = formatDatetimeLocal(end);
+
+            if (element && element.parentElement) {
+                element.parentElement.querySelectorAll('.pill-range').forEach(p => p.classList.remove('active'));
+                element.classList.add('active');
+            }
+
+            const desc = unit === 'all' ? 'todo el historial registrado' : `los últimos ${amount} ${unit === 'm' ? 'minutos' : unit === 'h' ? 'horas' : 'días'}`;
+            showToast(`Rango actualizado: ${desc}`);
+        }
+
+        // Pegar Rango desde Grafana (Global)
+        async function triggerPasteGrafanaGlobal() {
+            let clipboardText = '';
+            try {
+                if (navigator.clipboard && navigator.clipboard.readText) {
+                    clipboardText = await navigator.clipboard.readText();
+                }
+            } catch (err) {
+                console.warn("Acceso a portapapeles bloqueado:", err);
+            }
+
+            if (clipboardText && tryParseAndApplyGlobal(clipboardText)) {
                 return;
             }
 
-            // Convert local datetime input to UTC or keep as local
-            // Postgres timestamp generally accepts this format directly: YYYY-MM-DDTHH:mm
+            // Fallback: abrir modal asistido
+            const input = document.getElementById('grafana-paste-input');
+            const errorMsg = document.getElementById('grafana-modal-error');
+            if (input) input.value = clipboardText || '';
+            if (errorMsg) errorMsg.classList.add('d-none');
+            if (grafanaModalInstance) grafanaModalInstance.show();
+        }
+
+        function parseGrafanaTimeExpression(expr) {
+            if (!expr) return null;
+            if (typeof expr === 'number') return new Date(expr);
+            if (typeof expr !== 'string') return null;
+
+            const str = expr.trim();
+            if (str === 'now') return new Date();
+
+            const match = str.match(/^now\s*-\s*(\d+)([smhd])$/i);
+            if (match) {
+                const count = parseInt(match[1], 10);
+                const unit = match[2].toLowerCase();
+                const now = Date.now();
+                let delta = 0;
+                if (unit === 's') delta = count * 1000;
+                else if (unit === 'm') delta = count * 60 * 1000;
+                else if (unit === 'h') delta = count * 60 * 60 * 1000;
+                else if (unit === 'd') delta = count * 24 * 60 * 60 * 1000;
+                return new Date(now - delta);
+            }
+
+            const parsed = new Date(str);
+            if (!isNaN(parsed.getTime())) return parsed;
+            return null;
+        }
+
+        function tryParseAndApplyGlobal(rawText) {
+            if (!rawText) return false;
+            let data = null;
+
+            try {
+                data = JSON.parse(rawText);
+            } catch (e) {
+                const s = rawText.indexOf('{');
+                const f = rawText.lastIndexOf('}');
+                if (s !== -1 && f > s) {
+                    try { data = JSON.parse(rawText.substring(s, f + 1)); } catch (e2) { }
+                }
+            }
+
+            if (data && (data.from || data.fromTime) && (data.to || data.toTime)) {
+                const fromDate = parseGrafanaTimeExpression(data.from || data.fromTime);
+                const toDate = parseGrafanaTimeExpression(data.to || data.toTime);
+                if (fromDate && toDate) {
+                    applyGlobalRange(fromDate, toDate);
+                    return true;
+                }
+            }
+
+            if (rawText.includes('from=') && rawText.includes('to=')) {
+                try {
+                    const url = new URL(rawText.startsWith('http') ? rawText : `http://localhost/${rawText}`);
+                    const fromDate = parseGrafanaTimeExpression(url.searchParams.get('from'));
+                    const toDate = parseGrafanaTimeExpression(url.searchParams.get('to'));
+                    if (fromDate && toDate) {
+                        applyGlobalRange(fromDate, toDate);
+                        return true;
+                    }
+                } catch (e) { }
+            }
+
+            return false;
+        }
+
+        function applyGlobalRange(fromDate, toDate) {
+            document.getElementById('global-start-date').value = formatDatetimeLocal(fromDate);
+            document.getElementById('global-end-date').value = formatDatetimeLocal(toDate);
+
+            // Desmarcar píldoras rápidas
+            document.querySelectorAll('.grafana-quick-pills .pill-range').forEach(p => p.classList.remove('active'));
+
+            showToast("✓ Rango sincronizado desde Grafana correctamente");
+        }
+
+        function applyManualGrafanaRange() {
+            const input = document.getElementById('grafana-paste-input');
+            const errorMsg = document.getElementById('grafana-modal-error');
+            if (!input) return;
+
+            const success = tryParseAndApplyGlobal(input.value);
+            if (success) {
+                if (grafanaModalInstance) grafanaModalInstance.hide();
+            } else {
+                if (errorMsg) errorMsg.classList.remove('d-none');
+            }
+        }
+
+        // Ejecutar Descarga (CSV o JSON)
+        function executeDownload(format) {
+            const tableSelect = document.getElementById('export-table-select');
+            const tableName = tableSelect.value;
+            const startInput = document.getElementById('global-start-date').value;
+            const endInput = document.getElementById('global-end-date').value;
+
+            if (!startInput || !endInput) {
+                alert("Por favor selecciona las fechas del rango de extracción.");
+                return;
+            }
+
             const start = startInput.replace('T', ' ');
             const end = endInput.replace('T', ' ');
 
-            const url = `/api/download/${tableName}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
-            
-            // Create a temporary link to trigger download
+            const url = `/api/download/${tableName}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&format=${encodeURIComponent(format)}`;
+
+            if (tableName === 'all') {
+                showToast(`Generando paquete ZIP consolidado con todas las variables en formato ${format.toUpperCase()}...`);
+            } else {
+                const label = SENSOR_METADATA[tableName] ? SENSOR_METADATA[tableName].label : tableName;
+                showToast(`Descargando ${label} en formato ${format.toUpperCase()}...`);
+            }
+
             const a = document.createElement('a');
             a.href = url;
             a.download = '';
@@ -383,136 +944,191 @@
             document.body.removeChild(a);
         }
 
-        async function pasteGrafanaRange(tableName) {
+        // Cargar Información de las Variables
+        async function fetchTables() {
+            const container = document.getElementById('tables-container');
+            const loading = document.getElementById('loading');
+            const errorContainer = document.getElementById('error-container');
+
             try {
-                const text = await navigator.clipboard.readText();
-                if (!text) return;
-                
-                // Attempt to parse JSON
-                let data = null;
-                try {
-                    data = JSON.parse(text);
-                } catch (e) {
-                    alert("El texto en el portapapeles no parece ser un JSON válido de Grafana.\\n\\nCopia algo como: {\\\"from\\\":\\\"...\\\",\\\"to\\\":\\\"...\\\"}");
+                const response = await fetch('/api/tables');
+                if (!response.ok) throw new Error(`Error de servidor: ${response.status}`);
+                const tables = await response.json();
+                loading.classList.add('d-none');
+
+                if (!tables || tables.length === 0) {
+                    errorContainer.textContent = "No se encontraron variables de datos activas en el sistema.";
+                    errorContainer.classList.remove('d-none');
                     return;
                 }
 
-                if (data && data.from && data.to) {
-                    // Ajustar el formato para el input datetime-local
-                    const formatGrafanaTime = (timeStr) => {
-                        return timeStr.replace('Z', '').slice(0, 19);
-                    };
+                container.innerHTML = '';
+                tables.forEach(table => {
+                    const card = createVariableCard(table);
+                    container.appendChild(card);
+                });
 
-                    document.getElementById(`start-${tableName}`).value = formatGrafanaTime(data.from);
-                    document.getElementById(`end-${tableName}`).value = formatGrafanaTime(data.to);
-                } else {
-                    alert("El JSON copiado no contiene las propiedades 'from' y 'to'.");
-                }
-            } catch (err) {
-                console.error("Failed to read clipboard contents: ", err);
-                alert("No se pudo leer el portapapeles. Es posible que el navegador haya bloqueado el acceso o que necesites dar permisos.");
+            } catch (error) {
+                loading.classList.add('d-none');
+                errorContainer.textContent = "No se pudo cargar la información del sistema: " + error.message;
+                errorContainer.classList.remove('d-none');
             }
         }
 
-        // Web Serial API Logic
+        function createVariableCard(table) {
+            const col = document.createElement('div');
+            col.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+
+            const meta = SENSOR_METADATA[table.name] || {
+                label: table.name.replace(/_/g, ' ').toUpperCase(),
+                icon: 'bi-activity',
+                unit: '',
+                desc: 'Variable de medición'
+            };
+
+            col.innerHTML = `
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center py-2 px-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi ${meta.icon} text-danger" style="font-size: 1.15rem;"></i>
+                            <span class="fw-semibold text-truncate" style="font-size: 0.85rem;" title="${meta.label}">${meta.label}</span>
+                        </div>
+                        <span class="badge bg-secondary-subtle text-secondary mono" style="font-size: 0.65rem;">${table.name}</span>
+                    </div>
+
+                    <div class="card-body p-3 d-flex flex-column justify-content-between">
+                        <p class="text-secondary small mb-3" style="font-size: 0.74rem;">${meta.desc}</p>
+
+                        <div class="d-flex justify-content-between align-items-baseline mb-3 pb-2 border-bottom" style="border-color: var(--border-color) !important;">
+                            <div>
+                                <div class="text-muted" style="font-size: 0.68rem; text-transform: uppercase; font-weight: 600;">Lecturas</div>
+                                <div class="mono fw-bold" style="font-size: 1.35rem; color: var(--text-primary);">${table.row_count.toLocaleString()}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-muted" style="font-size: 0.68rem; text-transform: uppercase; font-weight: 600;">Espacio</div>
+                                <div class="mono text-secondary fw-semibold" style="font-size: 0.95rem;">${table.size}</div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary-custom w-100 d-flex justify-content-center align-items-center gap-2 py-1" onclick="selectAndExportVariable('${table.name}')" title="Seleccionar esta variable en el panel de exportación">
+                            <i class="bi bi-box-arrow-down text-danger"></i>
+                            <span style="font-size: 0.78rem;">Exportar esta variable</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            return col;
+        }
+
+        function selectAndExportVariable(tableName) {
+            const select = document.getElementById('export-table-select');
+            if (select) {
+                select.value = tableName;
+                select.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                select.focus();
+                showToast(`Variable seleccionada: ${SENSOR_METADATA[tableName] ? SENSOR_METADATA[tableName].label : tableName}`);
+            }
+        }
+
+        // Recepción Serial (USB)
         let port;
         let reader;
         let inputDone;
         let inputStream;
-        
+
         const btnConnect = document.getElementById('btn-connect-serial');
         const btnDisconnect = document.getElementById('btn-disconnect-serial');
         const serialStatus = document.getElementById('serial-status');
         const serialLog = document.getElementById('serial-log');
         const dataPulse = document.getElementById('data-pulse');
-        
+
+        function clearSerialLog() {
+            if (serialLog) {
+                serialLog.innerHTML = '<span class="text-muted">> Log limpio.</span>';
+            }
+        }
+
         btnConnect.addEventListener('click', async () => {
             if ('serial' in navigator) {
                 try {
                     port = await navigator.serial.requestPort();
                     await port.open({ baudRate: 9600 });
-                    
-                    // Forzar señales DTR y RTS para despertar placas Arduino/ESP32
+
                     if (port.setSignals) {
                         await port.setSignals({ dataTerminalReady: true, requestToSend: true });
                     }
-                    
-                    serialStatus.textContent = 'ONLINE_9600_BAUD';
-                    serialStatus.style.color = 'var(--accent-cyan)';
+
+                    serialStatus.textContent = 'CONECTADO (9600 BAUD)';
+                    serialStatus.style.color = 'var(--status-green)';
                     dataPulse.classList.add('active');
                     btnConnect.classList.add('d-none');
                     btnDisconnect.classList.remove('d-none');
-                    serialLog.style.display = 'block';
-                    serialLog.innerHTML = '<div>> CONEXION_ESTABLECIDA...</div>';
-                    
+                    serialLog.innerHTML = '<div>> Conexión establecida con el dispositivo USB.</div>';
+
                     readSerial();
                 } catch (err) {
-                    console.error('Error al conectar el puerto serial:', err);
-                    alert('ERR_CONEXION: No se pudo abrir el puerto serial.');
+                    console.error('Error al conectar:', err);
+                    alert('No se pudo abrir el puerto serial seleccionado o el usuario canceló.');
                 }
             } else {
-                alert('ERR_COMPAT: La Web Serial API no está soportada (requiere Chrome/Edge + HTTPS).');
+                alert('La conexión serial por navegador requiere Google Chrome, Microsoft Edge u Opera en HTTPS o localhost.');
             }
         });
-        
+
         btnDisconnect.addEventListener('click', async () => {
             if (reader) {
-                await reader.cancel();
+                try { await reader.cancel(); } catch (e) { }
             }
-            serialStatus.textContent = 'OFFLINE';
+            serialStatus.textContent = 'DESCONECTADO';
             serialStatus.style.color = '';
             dataPulse.classList.remove('active');
             btnConnect.classList.remove('d-none');
             btnDisconnect.classList.add('d-none');
+            logSerialData('> Puerto serial desconectado.');
         });
-        
+
         function extractJson(line) {
             if (!line) return null;
-            const limpia = line.replace(/\\0/g, '').trim();
+            const limpia = line.replace(/\0/g, '').trim();
             const ini = limpia.indexOf('{');
             const fin = limpia.lastIndexOf('}');
             if (ini === -1 || fin === -1 || fin <= ini) return null;
             return limpia.substring(ini, fin + 1);
         }
-        
+
         async function readSerial() {
             const textDecoder = new TextDecoderStream();
             inputDone = port.readable.pipeTo(textDecoder.writable);
             inputStream = textDecoder.readable;
             reader = inputStream.getReader();
-            
+
             let buffer = '';
-            
+
             try {
                 while (true) {
                     const { value, done } = await reader.read();
                     if (done) break;
                     if (value) {
-                        // DEBUG EXTREMO: imprimir cada pedacito que llega antes de procesarlo
-                        if (value.trim().length > 0) {
-                            logSerialData(`> CHUNK: ${value.trim()}`);
-                        }
-
                         buffer += value;
                         let lines = buffer.split('\n');
-                        buffer = lines.pop(); // Keep the incomplete line
-                        
-                        for (let line of lines) {
-                            if (line.trim().length > 0) {
-                                // Para ayudar a debugear si los datos están llegando sucios
-                                logSerialData(`> DBG: ${line.trim()}`);
-                            }
+                        buffer = lines.pop();
 
-                            const jsonStr = extractJson(line);
+                        for (let line of lines) {
+                            const trimmed = line.trim();
+                            if (!trimmed) continue;
+
+                            const jsonStr = extractJson(trimmed);
                             if (jsonStr) {
                                 try {
                                     const data = JSON.parse(jsonStr);
-                                    logSerialData(`> RX_OK: ${jsonStr}`);
+                                    logSerialData(`> Medición recibida: ${jsonStr}`);
                                     sendDataToServer(data);
                                     triggerPulse();
                                 } catch (e) {
-                                    logSerialData(`> ERR_PARSE: ${jsonStr}`);
+                                    logSerialData(`> Trama inválida: ${jsonStr}`);
                                 }
+                            } else {
+                                logSerialData(`> ${trimmed}`);
                             }
                         }
                     }
@@ -520,17 +1136,15 @@
             } catch (error) {
                 console.error("Error leyendo del serial:", error);
             } finally {
-                reader.releaseLock();
-                if (port) {
-                    await port.close();
-                }
+                if (reader) reader.releaseLock();
+                if (port) await port.close();
             }
         }
-        
+
         function triggerPulse() {
-            dataPulse.classList.remove('pulse-anim');
-            void dataPulse.offsetWidth; // trigger reflow
-            dataPulse.classList.add('pulse-anim');
+            dataPulse.classList.remove('status-pulse-anim');
+            void dataPulse.offsetWidth;
+            dataPulse.classList.add('status-pulse-anim');
         }
 
         function logSerialData(msg) {
@@ -538,11 +1152,11 @@
             div.textContent = msg;
             serialLog.appendChild(div);
             serialLog.scrollTop = serialLog.scrollHeight;
-            if (serialLog.childNodes.length > 50) {
+            if (serialLog.childNodes.length > 80) {
                 serialLog.removeChild(serialLog.firstChild);
             }
         }
-        
+
         async function sendDataToServer(data) {
             try {
                 await fetch('/api/serial-data', {
@@ -550,12 +1164,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                // Podríamos disparar un refetch de fetchTables() pero
-                // para no saturar la red, lo dejamos para que el usuario refresque.
             } catch (err) {
-                console.error('Error enviando datos al servidor:', err);
+                console.error('Error enviando datos:', err);
             }
         }
     </script>
 </body>
+
 </html>
