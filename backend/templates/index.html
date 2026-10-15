@@ -99,7 +99,10 @@
             color: var(--text-primary) !important;
         }
 
-        span, p, label, div {
+        span,
+        p,
+        label,
+        div {
             transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
         }
 
@@ -561,7 +564,7 @@
                     <div class="row g-3 align-items-center">
                         <div class="col-lg-4 col-md-5">
                             <p class="text-secondary mb-3" style="font-size: 0.78rem; line-height: 1.5;">
-                                Conecta el microcontrolador (Arduino / ESP32) mediante cable USB para capturar y
+                                Conecta el microcontrolador mediante cable USB para capturar y
                                 almacenar las variables de la microrred en tiempo real.
                             </p>
                             <div class="d-flex flex-column gap-2">
@@ -731,7 +734,7 @@
             const grafanaLink = document.getElementById('grafana-link');
             if (grafanaLink) {
                 if (host.includes('sslip.io')) {
-                    grafanaLink.href = 'https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1';
+                    grafanaLink.href = 'https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1';
                 } else {
                     grafanaLink.href = `http://${host}:3001`;
                 }
@@ -739,7 +742,7 @@
             const docsLink = document.getElementById('docs-link');
             if (docsLink) {
                 if (host.includes('sslip.io')) {
-                    docsLink.href = `http://${host}:8080`;
+                    docsLink.href = 'https://ems-application-cqwocu-f25d6d-51-222-139-162.sslip.io/';
                 } else {
                     docsLink.href = `http://${host}:8080`;
                 }

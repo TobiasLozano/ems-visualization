@@ -18,7 +18,7 @@ El cuadro de mando en **Grafana OSS** viene preconfigurado con conexión automá
 
 ### Acceso al Dashboard
 * **Acceso Local:** [http://localhost:3001](http://localhost:3001)
-* **Acceso Remoto (Servidor):** [`https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1`](https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1)
+* **Acceso Remoto (Servidor):** [`https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1`](https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1)
 * **Credenciales por defecto:** `admin` / `admin`
 
 <Figure
@@ -43,7 +43,7 @@ En la esquina superior derecha puedes ajustar la ventana de visualización (`Las
 ## Parte 2: Uso del Panel Web y Exportación de Telemetría
 
 :::info[El Panel Web es la Herramienta de Conexión y Exportación]
-El **Panel Web** ([`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/) en producción o [http://localhost:5000](http://localhost:5000) en local) es el centro operativo para conectar el puerto serie del STM32 y descargar mediciones históricas. Grafana se reserva exclusivamente para la supervisión gráfica en tiempo real.
+El **Panel Web** ([`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/) en producción o [http://localhost:5000](http://localhost:5000) en local) es el centro operativo para conectar el puerto serie del STM32 y descargar mediciones históricas. Grafana se reserva exclusivamente para la supervisión gráfica en tiempo real.
 :::
 
 <Figure
@@ -57,7 +57,7 @@ El **Panel Web** ([`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](
 
 1. Conecta el conversor USB-TTL al puerto USB de tu computadora.
 2. Abre tu navegador web compatible (Google Chrome, Microsoft Edge u Opera) y accede a la interfaz:
-   - En servidor remoto: [`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/)
+   - En servidor remoto: [`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/)
    - En entorno local: [`http://localhost:5000`](http://localhost:5000)
 3. En el bloque de **"Conexión de Medición Serial (USB)"**, haz clic en **"Conectar Dispositivo USB"**.
 4. El navegador desplegará la ventana nativa de permisos para seleccionar el puerto serie asignado al conversor USB-TTL conectado al STM32:

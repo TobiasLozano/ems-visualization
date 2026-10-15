@@ -14,8 +14,8 @@ El sistema puede operarse conectándose al **servidor remoto desplegado** (sin i
 
 Si deseas operar el sistema de inmediato para demostraciones, pruebas de campo o visualización remota:
 
-* **Interfaz Web de Telemetría (Flask):** [`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/)
-* **Plataforma Grafana:** [`https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1`](https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1)
+* **Interfaz Web de Telemetría (Flask):** [`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/)
+* **Plataforma Grafana:** [`https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1`](https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1)
   * **Usuario:** `admin`
   * **Contraseña:** `admin`
 
@@ -90,6 +90,12 @@ sudo usermod -a -G dialout $USER
 sudo chmod 666 /dev/ttyUSB0
 ```
 *Nota: Cierra e inicia sesión de nuevo para que los cambios de grupo surtan efecto.*
+
+:::info[Alternativas de Ingesta en Local: Web vs. Terminal]
+Para interactuar con el sistema en tu entorno local cuentas con dos alternativas de adquisición:
+* **Pruebas mediante la Aplicación Web (Método de Adquisición 1 - Web Serial API):** Con los contenedores en marcha, puedes realizar pruebas y operar el sistema directamente abriendo la interfaz web en [`http://localhost:5000`](http://localhost:5000) desde Google Chrome o Microsoft Edge, conectando el puerto serial directamente desde el navegador de forma interactiva y sin dependencias de terminal.
+* **Ejecución Directa desde la Terminal (`pyserial` - Script Standalone):** El uso de `pyserial` mediante el script `serial_reader.py` se puede usar cuando se busca ejecutar directamente desde la terminal en caso de que se quiera ejecutar sin dependencias externas del navegador, en entornos sin interfaz gráfica (headless) o para procesos automatizados en segundo plano.
+:::
 
 ### 5. Operación del script de adquisición en entorno local
 

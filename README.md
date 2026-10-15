@@ -25,9 +25,9 @@ Plataforma tecnológica integral de hardware embebido, circuitos de conmutación
 | **Desarrollador de Software** | **Ing. Tobias Lozano Florez** |
 | **Líder del Proyecto** | **MSc. Fabián Alonso Lara Vargas** (UPB Seccional Montería / SEC-LNCE) |
 | **Co-investigadores** | Dr. Carlos Vargas Salgado (UPV) · Dr. Jesús Águila Téllez (UdeG) · Ing. Miguel Ortiz (UPB) · Ing. Daniel Espinosa (UPB) |
-| **Panel Web (Producción)** | [`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/) |
-| **Dashboard de Grafana** | [`https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1`](https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1) |
-| **Manual de Usuario Web** | [`http://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io:8080/`](http://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io:8080/) |
+| **Panel Web (Producción)** | [`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/) |
+| **Dashboard de Grafana** | [`https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1`](https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1) |
+| **Manual de Usuario Web** | [`https://ems-application-cqwocu-f25d6d-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-f25d6d-51-222-139-162.sslip.io/) |
 
 ---
 
@@ -97,6 +97,22 @@ Calcula la potencia instantánea $P[k] = V[k] \times I[k]$ y compara con el cicl
 * `MODE_LOW_BAT` (Modo 3): Bloqueo por descarga profunda si $V_{\text{bat}} \le 9.50\,\text{V}$; se reactiva al recuperar $10.20\,\text{V}$.
 * **Tiempo Muerto (*Deadtime* = 500 ms):** Toda conmutación apaga temporalmente ambos PWMs para prevenir cortocircuitos entre fuentes.
 * **Protección Térmica Activa:** Si la termocupla registra $T \ge 60\,^\circ\text{C}$, se cancelan los ciclos de trabajo de conmutación de inmediato y el sistema no reanuda hasta descender a $\le 55\,^\circ\text{C}$ (histéresis de 5 °C).
+
+### 4. Inventario de Archivos de Firmware Suministrados (`firmware/`)
+
+El repositorio incluye el código fuente completo en lenguaje C++ (Arduino Core para STM32 / STM32Duino) para los diferentes escenarios de validación experimental dentro del directorio [`firmware/`](firmware/):
+
+| Archivo | Escenario / Ensayo | Características Principales |
+|:---|:---:|:---|
+| [`MPPT - BATERÍA 20W - EMS con protección térmica.ino`](firmware/MPPT%20-%20BATER%C3%8DA%2020W%20-%20EMS%20con%20protecci%C3%B3n%20t%C3%A9rmica.ino) | **20 W (Principal)** | Firmware principal de producción. Integra control MPPT P&O (80 kHz), gestión bidireccional de batería, FSM completa y **protección térmica activa con termocupla MAX6675** vía SPI ($T \ge 60\,^\circ\text{C}$ con histéresis de 5 °C). |
+| [`MPPT BAT a 15w.ino`](firmware/MPPT%20BAT%20a%2015w.ino) | **15 W** | Firmware calibrado para ensayo con carga reducida de 15 W. Control MPPT, algoritmo de carga/descarga y reporte serial JSON a 9600 baud. |
+| [`mppt bat 25w.ino`](firmware/mppt%20bat%2025w.ino) | **25 W** | Firmware configurado para pruebas de alta exigencia (25 W). Regulación de tensión en bus de 24 V, seguimiento de máxima potencia y balance dinámico con banco de baterías. |
+| [`cc cv funcional 1A 12.6v .ino`](firmware/cc%20cv%20funcional%201A%2012.6v%20.ino) | **Validación CC/CV** | Sketch de caracterización y prueba aislada para el algoritmo de carga de batería de iones de litio (corriente constante a 1.0 A, tensión constante a 12.6 V y corte seguro < 100 mA). |
+
+#### Requisitos de Compilación y Flasheo:
+* **Entorno:** Arduino IDE o PlatformIO con paquete **STM32 Cores** (*Generic STM32F103C series*).
+* **Librerías Requeridas:** `ArduinoJson` (v6.x), `Wire` (I2C para sensores INA226) y `SPI` (para termocupla MAX6675).
+* **Parámetros Serial:** `9600 baud`, `8N1`, salida en tramas JSON estructuradas a 1 Hz por el puerto UART1 (`PA9` TX / `PA10` RX).
 
 ---
 
@@ -192,9 +208,9 @@ Ensayos de validación realizados sobre el hardware real en Montería (Córdoba)
 ## Guía de Inicio Rápido
 
 ### Opción 1: Acceso a la Plataforma en Producción
-* **Panel Web de Adquisición y Exportación:** [`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/)
-* **Dashboard de Grafana:** [`https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1`](https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1) (acceso: `admin` / `admin`).
-* **Manual de Usuario Web:** [`http://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io:8080/`](http://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io:8080/)
+* **Panel Web de Adquisición y Exportación:** [`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/)
+* **Dashboard de Grafana:** [`https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1`](https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1) (acceso: `admin` / `admin`).
+* **Manual de Usuario Web:** [`https://ems-application-cqwocu-f25d6d-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-f25d6d-51-222-139-162.sslip.io/)
 
 ### Opción 2: Despliegue en Entorno Local con Docker Compose
 

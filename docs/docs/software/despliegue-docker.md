@@ -112,7 +112,7 @@ El dashboard de Grafana y la conexión a la base de datos se configuran de forma
 
 Para acceder al panel:
 
-1. Abrir `https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1` en un navegador.
+1. Abrir `https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1` en un navegador.
 2. Ingresar con las credenciales por defecto:
    - **Usuario:** `admin`
    - **Password:** `admin`

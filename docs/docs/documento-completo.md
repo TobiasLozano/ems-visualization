@@ -51,7 +51,7 @@ Este documento constituye la guía de operación y ficha técnica descriptiva de
 | **Desarrollador de Software** | **Ing. Tobias Lozano Florez** |
 | **Líder del Proyecto** | **MSc. Fabián Alonso Lara Vargas** (UPB Seccional Montería / SEC-LNCE) |
 | **Destino de Registro** | **Dirección Nacional de Derechos de Autor (DNDA)** y Banco de Prototipos UPB Montería. |
-| **Servidor en Producción** | [`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/) |
+| **Servidor en Producción** | [`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/) |
 | **Repositorio Oficial** | [GitHub: TobiasLozano/ems-visualization](https://github.com/TobiasLozano/ems-visualization) |
 
 </div>
@@ -224,8 +224,8 @@ El sistema puede operarse conectándose al **servidor remoto desplegado** (sin i
 
 Si deseas operar el sistema de inmediato para demostraciones, pruebas de campo o visualización remota:
 
-* **Interfaz Web de Telemetría (Flask):** [`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/)
-* **Plataforma Grafana:** [`https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1`](https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1)
+* **Interfaz Web de Telemetría (Flask):** [`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/)
+* **Plataforma Grafana:** [`https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1`](https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1)
   * **Usuario:** `admin`
   * **Contraseña:** `admin`
 
@@ -301,6 +301,12 @@ sudo chmod 666 /dev/ttyUSB0
 ```
 *Nota: Cierra e inicia sesión de nuevo para que los cambios de grupo surtan efecto.*
 
+:::info[Alternativas de Ingesta en Local: Web vs. Terminal]
+Para interactuar con el sistema en tu entorno local cuentas con dos alternativas de adquisición:
+* **Pruebas mediante la Aplicación Web (Método de Adquisición 1 - Web Serial API):** Con los contenedores en marcha, puedes realizar pruebas y operar el sistema directamente abriendo la interfaz web en [`http://localhost:5000`](http://localhost:5000) desde Google Chrome o Microsoft Edge, conectando el puerto serial directamente desde el navegador de forma interactiva y sin dependencias de terminal.
+* **Ejecución Directa desde la Terminal (`pyserial` - Script Standalone):** El uso de `pyserial` mediante el script `serial_reader.py` se puede usar cuando se busca ejecutar directamente desde la terminal en caso de que se quiera ejecutar sin dependencias externas del navegador, en entornos sin interfaz gráfica (headless) o para procesos automatizados en segundo plano.
+:::
+
 ### 5. Operación del script de adquisición en entorno local
 
 Con el entorno local activo, el script `serial_reader.py` (Modo B del capítulo 2) captura la trama del STM32 y la inserta directamente en PostgreSQL, sin necesidad de abrir el navegador.
@@ -355,7 +361,7 @@ El cuadro de mando en **Grafana OSS** viene preconfigurado con conexión automá
 
 ### Acceso al Dashboard
 * **Acceso Local:** [http://localhost:3001](http://localhost:3001)
-* **Acceso Remoto (Servidor):** [`https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1`](https://tobias-ems-o633sc-9ec290-51-222-139-162.sslip.io/?orgId=1)
+* **Acceso Remoto (Servidor):** [`https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1`](https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1)
 * **Credenciales por defecto:** `admin` / `admin`
 
 <Figure
@@ -380,7 +386,7 @@ En la esquina superior derecha puedes ajustar la ventana de visualización (`Las
 ## Parte 2: Uso del Panel Web y Exportación de Telemetría
 
 :::info[El Panel Web es la Herramienta de Conexión y Exportación]
-El **Panel Web** ([`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/) en producción o [http://localhost:5000](http://localhost:5000) en local) es el centro operativo para conectar el puerto serie del STM32 y descargar mediciones históricas. Grafana se reserva exclusivamente para la supervisión gráfica en tiempo real.
+El **Panel Web** ([`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/) en producción o [http://localhost:5000](http://localhost:5000) en local) es el centro operativo para conectar el puerto serie del STM32 y descargar mediciones históricas. Grafana se reserva exclusivamente para la supervisión gráfica en tiempo real.
 :::
 
 <Figure
@@ -394,7 +400,7 @@ El **Panel Web** ([`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](
 
 1. Conecta el conversor USB-TTL al puerto USB de tu computadora.
 2. Abre tu navegador web compatible (Google Chrome, Microsoft Edge u Opera) y accede a la interfaz:
-   - En servidor remoto: [`https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/`](https://tobias-ems-o633sc-4dd19b-51-222-139-162.sslip.io/)
+   - En servidor remoto: [`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/)
    - En entorno local: [`http://localhost:5000`](http://localhost:5000)
 3. En el bloque de **"Conexión de Medición Serial (USB)"**, haz clic en **"Conectar Dispositivo USB"**.
 4. El navegador desplegará la ventana nativa de permisos para seleccionar el puerto serie asignado al conversor USB-TTL conectado al STM32:

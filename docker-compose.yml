@@ -58,7 +58,8 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - solar_net
     restart: unless-stopped

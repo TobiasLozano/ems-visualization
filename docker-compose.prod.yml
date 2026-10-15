@@ -1,13 +1,15 @@
 services:
   postgres:
     image: ${DOCKER_USERNAME:-tobiaslozano}/ems-postgres:latest
+    pull_policy: always
     container_name: solar_postgres
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-sensors_db}
-    ports:
-      - "5432:5432"
+    # Descomentar si requieres acceso directo a la BD desde fuera del servidor:
+    # ports:
+    #   - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -21,6 +23,7 @@ services:
 
 #  serial_reader:
 #    image: ${DOCKER_USERNAME:-tobiaslozano}/ems-reader:latest
+#    pull_policy: always
 #    container_name: solar_reader
 #    environment:
 #      SERIAL_PORT: ${SERIAL_PORT:-/dev/ttyUSB0}
@@ -41,19 +44,22 @@ services:
 
   grafana:
     image: ${DOCKER_USERNAME:-tobiaslozano}/ems-grafana:latest
+    pull_policy: always
     container_name: solar_grafana
     ports:
       - "3001:3000"
     volumes:
       - grafana_data:/var/lib/grafana
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - solar_net
     restart: unless-stopped
 
   web_app:
     image: ${DOCKER_USERNAME:-tobiaslozano}/ems-webapp:latest
+    pull_policy: always
     container_name: solar_webapp
     environment:
       DB_HOST: postgres
@@ -72,6 +78,7 @@ services:
 
   docs:
     image: ${DOCKER_USERNAME:-tobiaslozano}/ems-docs:latest
+    pull_policy: always
     container_name: solar_docs
     ports:
       - "8080:80"
