@@ -49,6 +49,8 @@ services:
     environment:
       GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/}
       GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_SECURITY_COOKIE_SECURE: "true"
+      GF_SERVER_ENABLE_GZIP: "true"
     ports:
       - "3001:3000"
     volumes:

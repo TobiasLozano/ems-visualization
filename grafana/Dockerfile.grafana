@@ -1,5 +1,10 @@
 FROM grafana/grafana:latest
 
+USER root
+# Prevenir falso positivo de fallo de carga en navegadores limpios sin cache
+RUN sed -i 's/window.__grafana_load_failed();/setTimeout(function() { if (!window.__grafana_app_bundle_loaded) window.__grafana_load_failed(); }, 3500);/g' /usr/share/grafana/public/views/index.html
+USER grafana
+
 # Copiar configuración de provisioning (datasource y dashboards)
 COPY grafana/provisioning /etc/grafana/provisioning
 
