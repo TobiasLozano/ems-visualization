@@ -18,20 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "links": [
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": false,
-      "tags": [],
-      "targetBlank": true,
-      "title": "Ver datos",
-      "tooltip": "Abrir panel de adquisición y descarga",
-      "type": "link",
-      "url": "https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/"
-    }
-  ],
+  "links": [],
   "panels": [
     {
       "datasource": {
