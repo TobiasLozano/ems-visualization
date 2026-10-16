@@ -24,7 +24,7 @@ Plataforma tecnológica integral de hardware embebido, circuitos de conmutación
 | **Instituciones Aliadas** | **Universitat Politècnica de València (UPV)**, España · **Universidad de Guadalajara (UdeG)**, México |
 | **Desarrollador de Software** | **Ing. Tobias Lozano Florez** |
 | **Líder del Proyecto** | **MSc. Fabián Alonso Lara Vargas** (UPB Seccional Montería / SEC-LNCE) |
-| **Co-investigadores** | Dr. Carlos Vargas Salgado (UPV) · Dr. Jesús Águila Téllez (UdeG) · Ing. Miguel Ortiz (UPB) · Ing. Daniel Espinosa (UPB) |
+| **Co-investigadores** | Dr. Carlos Vargas Salgado (UPV) · Dr. Jesús Águila Téllez (UdeG) · MSc. Miguel Ortiz (UPB) · MSc. Daniel Espinosa (UPB) |
 | **Panel Web (Producción)** | [`https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-4ebfba-51-222-139-162.sslip.io/) |
 | **Dashboard de Grafana** | [`https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1`](https://ems-application-cqwocu-68ba27-51-222-139-162.sslip.io/?orgId=1) |
 | **Manual de Usuario Web** | [`https://ems-application-cqwocu-f25d6d-51-222-139-162.sslip.io/`](https://ems-application-cqwocu-f25d6d-51-222-139-162.sslip.io/) |
@@ -266,4 +266,4 @@ npm run export-pdf     # Generación automatizada del manual en formato PDF
 * **Asesores Externos:**
   * Dr. Carlos Vargas Salgado — *Universitat Politècnica de València (UPV), España*
   * Dr. Jesús Águila Téllez — *Universidad de Guadalajara (UdeG), México*
-* **Investigadores:** Ing. Miguel Ortiz Padilla · Ing. Daniel Espinosa Corrales — *UPB Montería*
+* **Investigadores:** MSc. Miguel Ortiz Padilla · MSc. Daniel Espinosa Corrales — *UPB Montería*

@@ -101,7 +101,7 @@ const config = {
             ],
           },
         ],
-        copyright: `© ${new Date().getFullYear()} Tobias Lozano — EMS Microgrid DC. Universidad Pontificia Bolivariana.`,
+        copyright: `© ${new Date().getFullYear()} Tobías Lozano Florez — EMS Microgrid DC. Universidad Pontificia Bolivariana.`,
       },
       prism: {
         theme: prismThemes.github,

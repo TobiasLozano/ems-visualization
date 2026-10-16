@@ -64,12 +64,12 @@ La concepción, desarrollo e implementación del EMS articula capacidades interi
 
 | Investigador / Ingeniero | Institución | Rol en el Proyecto | Función Principal |
 |:---|:---|:---|:---|
-| **Fabián Alonso Lara Vargas** | UPB Seccional Montería / SEC-LNCE | **Líder del Proyecto** | Dirección técnica, integración FV-BESS y coordinación científica. |
+| **MSc. Fabián Alonso Lara Vargas** | UPB Seccional Montería / SEC-LNCE | **Líder del Proyecto** | Dirección técnica, integración FV-BESS y coordinación científica. |
 | **Dr. Carlos Vargas Salgado** | Universitat Politècnica de València (UPV) | **Co-investigador Externo** | Asesoría en gestión energética y validación del EMS. |
 | **Dr. Jesús Águila Téllez** | Universidad de Guadalajara (UdeG) | **Co-investigador Externo** | Soporte en control de microrredes y análisis dinámico de resultados. |
 | **Ing. Tobias Lozano Florez** | Externo (Desarrollador) | **Desarrollador de Software** | Diseño, arquitectura, despliegue y mantenimiento de la plataforma EMS. |
-| **Ing. Miguel Ángel Ortiz Padilla** | UPB Seccional Montería | **Co-investigador** | Implementación de firmware STM32 y ejecución de pruebas de campo. |
-| **Ing. Daniel Espinosa Corrales** | UPB Seccional Montería | **Co-investigador** | Modelado y validación experimental de la microrred DC. |
+| **MSc. Miguel Ángel Ortiz Padilla** | UPB Seccional Montería | **Co-investigador** | Implementación de firmware STM32 y ejecución de pruebas de campo. |
+| **MSc. Daniel Espinosa Corrales** | UPB Seccional Montería | **Co-investigador** | Modelado y validación experimental de la microrred DC. |
 
 ---
 
